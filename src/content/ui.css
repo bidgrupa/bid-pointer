@@ -1,0 +1,1419 @@
+@import '../styles/tokens.css';
+@import '../styles/base.css';
+@import '../styles/controls.css';
+@import './seo/seo.css';
+
+/*
+ * Pointer's on-page UI. It lives in a shadow root on top of any staging site, so it
+ * inherits nothing: the host is reset and every surface sets its own type and colour.
+ *
+ * Signature: the orange pin. It marks the clicked spot on the page, heads the note,
+ * and the same mark is drawn into the attached screenshot (background/capture.ts).
+ */
+
+:host {
+  all: initial;
+}
+
+.dock,
+.pin,
+.note,
+.toast {
+  z-index: 2147483647;
+}
+
+.outline,
+.draft-pin {
+  z-index: 2147483646;
+}
+
+/* ---------- Dock: Publish task and the launcher, in a corner ---------- */
+
+/* Bottom right until it's dragged elsewhere (dockdrag.ts); the host's data-corner says where. */
+.dock {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+}
+
+/* hidden for the moment it takes to read where it was left, so it doesn't jump there */
+:host(:not([data-corner])) .dock {
+  visibility: hidden;
+}
+
+/* The recording bar takes the dock's place. In a left corner the launcher sits outermost. */
+:host([data-corner^='top']) .dock,
+:host([data-corner^='top']) .recbar {
+  top: 20px;
+  bottom: auto;
+}
+
+:host([data-corner$='left']) .dock,
+:host([data-corner$='left']) .recbar {
+  right: auto;
+  left: 20px;
+}
+
+:host([data-corner$='left']) .dock {
+  flex-direction: row-reverse;
+}
+
+.dock.is-dragging {
+  scale: 1.04;
+  filter: drop-shadow(0 14px 18px rgba(29, 28, 44, 0.24));
+}
+
+.dock.is-dragging,
+.dock.is-dragging * {
+  cursor: grabbing !important;
+}
+
+/* ---------- While dragging: a line to the corner it would land in, and a ring on the spot ---------- */
+
+/* Under the dock, so the line runs out from beneath it. Orange on an ink track reads on light
+   and dark sites alike. */
+.dock-guide {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483646;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 200ms var(--ease);
+}
+
+.dock-guide.is-visible {
+  opacity: 1;
+}
+
+.dock-guide-track {
+  stroke: rgba(29, 28, 44, 0.85);
+  stroke-width: 5.5;
+  stroke-linecap: round;
+}
+
+/* orange edged in ink, like the pin; the dashes flow toward the ring */
+.dock-guide-line {
+  stroke: var(--orange);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-dasharray: 9 6;
+  animation: dock-flow 600ms linear infinite;
+}
+
+@keyframes dock-flow {
+  to {
+    stroke-dashoffset: -15;
+  }
+}
+
+.dock-guide-pop,
+.dock-guide-pulse,
+.dock-guide-ripple {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.dock-guide-halo {
+  fill: rgba(255, 161, 115, 0.22);
+  stroke: rgba(29, 28, 44, 0.85);
+  stroke-width: 5.5;
+}
+
+.dock-guide-ring {
+  fill: none;
+  stroke: var(--orange);
+  stroke-width: 2.5;
+}
+
+.dock-guide-dot {
+  fill: var(--orange);
+  stroke: var(--ink);
+  stroke-width: 1.5;
+}
+
+.dock-guide-pulse,
+.dock-guide-ripple {
+  fill: none;
+  stroke: var(--orange);
+  stroke-width: 2;
+}
+
+.dock-guide-pulse {
+  animation: dock-pulse 1.2s var(--ease) infinite;
+}
+
+.dock-guide-ripple {
+  opacity: 0;
+}
+
+@keyframes dock-pulse {
+  from {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+
+  to {
+    opacity: 0;
+    transform: scale(1.9);
+  }
+}
+
+/* ---------- Launcher ---------- */
+
+.launcher {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  height: 44px;
+  padding: 0 18px 0 14px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--ink);
+  color: var(--paper);
+  box-shadow: var(--lift);
+  font-family: var(--font);
+  cursor: pointer;
+  user-select: none;
+  transition: transform 160ms var(--ease);
+}
+
+.launcher:hover {
+  transform: translateY(-1px);
+}
+
+.launcher:focus-visible {
+  outline: none;
+  box-shadow: var(--lift), var(--ring);
+}
+
+.launcher-icon {
+  position: relative;
+  width: 20px;
+  height: 20px;
+  color: var(--orange);
+}
+
+.launcher-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* Shown only when Pointer can't file tasks yet; the launcher's title says what's missing. */
+.launcher-badge {
+  position: absolute;
+  top: -2px;
+  right: -3px;
+  display: none;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--danger-light);
+  box-shadow: 0 0 0 2px var(--paper);
+}
+
+.launcher.needs-setup .launcher-badge {
+  display: block;
+}
+
+.launcher-kbd {
+  display: none;
+  border-color: rgba(29, 28, 44, 0.35);
+  background: transparent;
+}
+
+.launcher.is-active {
+  background: var(--gold);
+  color: var(--ink);
+}
+
+.launcher.is-active .launcher-icon {
+  color: var(--ink);
+}
+
+.launcher.is-active .launcher-kbd {
+  display: inline-flex;
+}
+
+/* Page-task mode: the label says "Page task", and an orange ring sets it apart at a glance. */
+.launcher.is-page:not(.is-active) {
+  box-shadow:
+    var(--lift),
+    0 0 0 3px var(--orange);
+}
+
+/* ---------- Publish task ---------- */
+
+.publish {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  height: 44px;
+  padding: 0 18px 0 8px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--paper);
+  color: var(--ink);
+  /* paper with an ink ring, so it never looks like the launcher (ink, or gold while pointing) */
+  box-shadow:
+    var(--lift),
+    inset 0 0 0 2px var(--ink);
+  font-family: var(--font);
+  cursor: pointer;
+  user-select: none;
+  transition: transform 160ms var(--ease);
+}
+
+.publish:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.publish:focus-visible {
+  outline: none;
+  box-shadow:
+    var(--lift),
+    inset 0 0 0 2px var(--ink),
+    var(--ring);
+}
+
+/* How many notes go out. */
+.publish-count {
+  display: inline-grid;
+  place-items: center;
+  min-width: 28px;
+  height: 28px;
+  padding: 0 8px;
+  border-radius: var(--radius-pill);
+  background: var(--orange);
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+/* Nothing to publish yet: still there, so the mode is plain to see, but plainly not ready. */
+.publish:disabled {
+  color: var(--ink-2);
+  box-shadow:
+    var(--lift),
+    inset 0 0 0 1px var(--line);
+  cursor: default;
+}
+
+.publish:disabled .publish-count {
+  background: var(--line);
+  color: var(--ink-2);
+}
+
+.publish.is-busy {
+  color: var(--ink);
+  cursor: progress;
+}
+
+.publish.is-busy .publish-count {
+  animation: count-pulse 1s var(--ease) infinite alternate;
+}
+
+@keyframes count-pulse {
+  to {
+    opacity: 0.45;
+  }
+}
+
+/* ---------- Outlines while pointing ---------- */
+
+.outline {
+  position: fixed;
+  display: none;
+  pointer-events: none;
+}
+
+.outline.is-visible {
+  display: block;
+}
+
+.outline--block {
+  border-radius: 2px;
+  outline: 3px solid var(--orange);
+  background: rgba(255, 161, 115, 0.08);
+}
+
+/* Dashed ink with a light halo, so it reads on dark sites too. */
+.outline--element {
+  border-radius: 3px;
+  outline: 2px dashed var(--ink);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 2px rgba(253, 252, 252, 0.85);
+}
+
+/* The block's name, attached to its outline. */
+.outline-tab {
+  position: absolute;
+  bottom: 100%;
+  left: -3px;
+  max-width: min(60vw, 560px);
+  padding: 7px 10px 6px;
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  background: var(--orange);
+  color: var(--ink);
+  font: 600 13px/1 var(--font);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.outline-tab:empty {
+  display: none;
+}
+
+.outline-tab.is-inside {
+  top: 0;
+  bottom: auto;
+  left: 0;
+  border-radius: 0 0 var(--radius-sm) 0;
+}
+
+/* ---------- Pin ---------- */
+
+/* A comment pin: its one sharp corner touches the clicked spot, so the spot stays visible. */
+.pin,
+.note-pin {
+  position: relative;
+  border: 2px solid var(--ink);
+  border-radius: 50% 50% 50% 0;
+  background: var(--orange);
+}
+
+.pin::after,
+.note-pin::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  background: var(--paper);
+}
+
+.pin {
+  position: fixed;
+  display: none;
+  width: 24px;
+  height: 24px;
+  margin-top: -24px;
+  box-shadow:
+    0 0 0 2px var(--paper),
+    0 6px 14px rgba(29, 28, 44, 0.35);
+  transform-origin: 0 100%;
+  pointer-events: none;
+}
+
+.pin::after {
+  inset: 6px;
+}
+
+/* Near the right or top edge the pin turns toward open space; the tip stays on the spot. */
+.pin.flip-x {
+  margin-left: -24px;
+  border-radius: 50% 50% 0 50%;
+  transform-origin: 100% 100%;
+}
+
+.pin.flip-y {
+  margin-top: 0;
+  border-radius: 0 50% 50% 50%;
+  transform-origin: 0 0;
+}
+
+.pin.flip-x.flip-y {
+  border-radius: 50% 0 50% 50%;
+  transform-origin: 100% 0;
+}
+
+.pin.is-visible {
+  display: block;
+  animation: pin-drop 220ms var(--ease);
+}
+
+@keyframes pin-drop {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.6);
+  }
+}
+
+/* ---------- Page-task pins: one per note waiting on the page ---------- */
+
+.draft-pin {
+  position: fixed;
+  width: 24px;
+  height: 24px;
+  margin-top: -24px;
+  padding: 0;
+  border: 2px solid var(--ink);
+  border-radius: 50% 50% 50% 0;
+  background: var(--orange);
+  color: var(--ink);
+  box-shadow:
+    0 0 0 2px var(--paper),
+    0 6px 14px rgba(29, 28, 44, 0.35);
+  font: 700 11px/20px var(--font);
+  text-align: center;
+  cursor: pointer;
+  transform-origin: 0 100%;
+  transition: transform 120ms var(--ease);
+}
+
+.draft-pin.flip-x {
+  margin-left: -24px;
+  border-radius: 50% 50% 0 50%;
+  transform-origin: 100% 100%;
+}
+
+.draft-pin.flip-y {
+  margin-top: 0;
+  border-radius: 0 50% 50% 50%;
+  transform-origin: 0 0;
+}
+
+.draft-pin.flip-x.flip-y {
+  border-radius: 50% 0 50% 50%;
+  transform-origin: 100% 0;
+}
+
+.draft-pin:hover {
+  transform: scale(1.15);
+}
+
+/* The note open for a change. */
+.draft-pin.is-editing {
+  background: var(--ink);
+  color: var(--orange);
+  transform: scale(1.15);
+}
+
+.draft-pin:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 2px var(--paper),
+    var(--ring);
+}
+
+/* ---------- Note ---------- */
+
+.note {
+  position: fixed;
+  display: none;
+  flex-direction: column;
+  width: 400px;
+  max-width: calc(100% - 16px);
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  background: var(--paper);
+  color: var(--ink);
+  box-shadow:
+    0 0 0 1px rgba(29, 28, 44, 0.08),
+    var(--lift);
+  font: 400 15px/1.45 var(--font);
+}
+
+.note.is-open {
+  display: flex;
+  animation: note-in 180ms var(--ease);
+}
+
+@keyframes note-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+}
+
+.note-head {
+  display: grid;
+  gap: 12px;
+  padding: 16px 18px 14px;
+  border-bottom: 1px solid var(--line);
+}
+
+.note-top {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+/* The full block name, wrapping between words (view.ts inserts <wbr>) rather than truncating. */
+.note-block {
+  display: flex;
+  flex: 1;
+  align-items: flex-start;
+  gap: 9px;
+  min-width: 0;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+
+/* Where the note will be filed from. Production is filled in, so a live site stands out. */
+.note-env {
+  flex: none;
+  margin-top: 1px;
+  padding: 3px 9px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  color: var(--ink-2);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.note-num {
+  flex: none;
+  margin-top: 1px;
+  padding: 3px 9px;
+  border-radius: var(--radius-pill);
+  background: var(--orange);
+  color: var(--ink);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.note-env--production {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: var(--paper);
+}
+
+/* Pulled up and out a little so the × lines up with the name and sits in the card's corner. */
+.note-close {
+  flex: none;
+  width: 28px;
+  height: 28px;
+  margin: -4px -6px 0 0;
+  padding: 7px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--ink-2);
+  cursor: pointer;
+  transition:
+    background-color 150ms ease,
+    color 150ms ease;
+}
+
+.note-close:hover {
+  background: var(--line);
+  color: var(--ink);
+}
+
+.note-close:focus-visible {
+  outline: none;
+  box-shadow: var(--ring);
+}
+
+.note-close svg {
+  width: 100%;
+  height: 100%;
+}
+
+.note-block.is-none {
+  color: var(--ink-2);
+  font-weight: 500;
+}
+
+.note-pin {
+  flex: none;
+  width: 14px;
+  height: 14px;
+  margin-top: 3px;
+}
+
+.note-pin::after {
+  inset: 3px;
+}
+
+/* Where the task goes, and who gets it. The person picker is as wide as the name it shows;
+   the project takes the rest of the row, and they stack when both don't fit. */
+.note-pickers {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.note-select {
+  height: 40px;
+  min-width: 0;
+  max-width: 100%;
+  padding: 0 32px 0 36px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  background-color: var(--paper);
+  background-image: var(--icon), var(--icon-chevron);
+  background-repeat: no-repeat;
+  background-position:
+    13px center,
+    right 13px center;
+  background-size:
+    16px 16px,
+    12px 7px;
+  font-size: 14px;
+  font-weight: 500;
+  text-overflow: ellipsis;
+  cursor: pointer;
+  appearance: none;
+  transition:
+    border-color 150ms ease,
+    box-shadow 150ms ease;
+}
+
+.note-project {
+  --icon: var(--icon-list);
+  flex: 1 1 190px;
+}
+
+.note-assignee {
+  --icon: var(--icon-person);
+  flex: 0 1 auto;
+  field-sizing: content;
+}
+
+.note-select:hover:not(:disabled) {
+  border-color: var(--ink-3);
+}
+
+.note-select:focus-visible {
+  outline: none;
+  border-color: var(--orange-dark);
+  box-shadow: var(--ring);
+}
+
+/* No project matched the site, so the empty choice should look unfinished. */
+.note-project.is-empty {
+  border-color: var(--orange);
+  background-color: var(--orange-wash);
+  color: var(--orange-ink);
+}
+
+.note-select:disabled {
+  color: var(--ink-3);
+  cursor: default;
+}
+
+.note-select option,
+.note-select optgroup {
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.note-body {
+  padding: 14px 18px 16px;
+}
+
+.note-input {
+  display: block;
+  width: 100%;
+  min-height: 6em;
+  max-height: 40vh;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  font-size: 16px;
+  line-height: 1.5;
+  resize: none;
+  field-sizing: content;
+}
+
+.note-input::placeholder {
+  color: var(--ink-3);
+}
+
+.note-foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+  padding: 10px 18px 12px;
+  background: var(--creme);
+  color: var(--ink-2);
+  font-size: 12px;
+  line-height: 1.3;
+}
+
+.hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.hint kbd + kbd {
+  margin-left: -2px;
+}
+
+.note-remove {
+  margin-left: auto;
+  padding: 2px 0;
+  border: 0;
+  background: transparent;
+  color: var(--danger);
+  font-size: 12px;
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.note-remove:hover {
+  text-decoration-thickness: 2px;
+}
+
+.note-remove:focus-visible {
+  outline: none;
+  border-radius: var(--radius-sm);
+  box-shadow: var(--ring);
+}
+
+/* ---------- Note: sending ---------- */
+
+.progress {
+  display: grid;
+  gap: 10px;
+}
+
+.progress-label {
+  font-weight: 600;
+}
+
+.progress-track {
+  display: grid;
+  grid-auto-columns: 1fr;
+  grid-auto-flow: column;
+  gap: 4px;
+}
+
+.progress-seg {
+  position: relative;
+  height: 4px;
+  overflow: hidden;
+  border-radius: 2px;
+  background: var(--line);
+}
+
+.progress-seg.is-done {
+  background: var(--orange-dark);
+}
+
+.progress-seg.is-active::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--gold);
+  transform-origin: left;
+  animation: seg-fill 1.4s var(--ease) infinite;
+}
+
+@keyframes seg-fill {
+  0% {
+    opacity: 1;
+    transform: scaleX(0);
+  }
+  70% {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scaleX(1);
+  }
+}
+
+.note-thumb {
+  display: block;
+  width: 100%;
+  max-height: 180px;
+  margin-top: 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--creme);
+  object-fit: contain;
+}
+
+/* ---------- Note: review ---------- */
+
+.field {
+  display: grid;
+  gap: 6px;
+}
+
+.field + .field {
+  margin-top: 14px;
+}
+
+.field-label {
+  color: var(--ink-2);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.field-input {
+  display: block;
+  width: 100%;
+  padding: 9px 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  outline: none;
+  background: var(--paper);
+  font-size: 15px;
+  line-height: 1.45;
+  resize: none;
+  field-sizing: content;
+  transition:
+    border-color 150ms ease,
+    box-shadow 150ms ease;
+}
+
+.field-input:focus {
+  border-color: var(--orange-dark);
+  box-shadow: var(--ring);
+}
+
+.review-title {
+  font-weight: 600;
+}
+
+/* The whole description, Markdown and all; long ones scroll inside the field. */
+.review-description {
+  min-height: calc(6 * 1.45em + 20px);
+  max-height: 42vh;
+  overflow-y: auto;
+  font-size: 14px;
+}
+
+.field-help {
+  color: var(--ink-2);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+/* ---------- Comment Mode: where the note goes ---------- */
+
+.note-target:empty {
+  display: none;
+}
+
+.target {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+  color: var(--ink-2);
+  font-size: 13px;
+  line-height: 1.35;
+}
+
+.target > svg {
+  flex: none;
+  width: 16px;
+  height: 16px;
+}
+
+.target > span {
+  flex: 1 1 200px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+/* An open task takes the note: orange wash, like the other "this is what happens" states. */
+.target.is-found {
+  padding: 8px 10px;
+  border-radius: var(--radius-md);
+  background: var(--orange-wash);
+  color: var(--orange-ink);
+}
+
+.target-task {
+  border-radius: var(--radius-sm);
+  color: var(--ink);
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+.target-task:hover {
+  text-decoration-thickness: 2px;
+}
+
+.target-status {
+  display: inline-block;
+  padding: 1px 7px;
+  border: 1px solid currentColor;
+  border-radius: var(--radius-pill);
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.target-switch {
+  flex: none;
+  padding: 2px 0;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  font-size: 12px;
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.target-task:focus-visible,
+.target-switch:focus-visible {
+  outline: none;
+  box-shadow: var(--ring);
+}
+
+/* A comment's review: which task it goes on, in place of the name field. */
+.review-on {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+  color: var(--ink-2);
+  font-size: 14px;
+  overflow-wrap: anywhere;
+}
+
+.review-on svg {
+  flex: none;
+  width: 16px;
+  height: 16px;
+  color: var(--orange-dark);
+}
+
+.review-on b {
+  color: var(--ink);
+}
+
+/* The rewrite failed: say so above the fields, without making it an error. */
+.review-note {
+  margin-bottom: 14px;
+  padding: 8px 12px;
+  border-radius: var(--radius-md);
+  background: var(--orange-wash);
+  color: var(--orange-ink);
+  font-size: 13px;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+/* ---------- Easter egg: spin the button round quickly while dragging it and it throws confetti ---------- */
+
+/* The confetti (confetti.ts) on a canvas under the dock, so it comes out from behind the button. */
+.confetti {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483646;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* at its wildest, the button can't keep still */
+:host(.is-wild) .launcher {
+  animation: party-wobble 130ms ease-in-out infinite alternate;
+}
+
+@keyframes party-wobble {
+  from {
+    rotate: -2deg;
+  }
+
+  to {
+    rotate: 2deg;
+  }
+}
+
+/* ---------- Page task review: a sheet beside the dock (above it, or below in a top corner) ---------- */
+
+.sheet {
+  right: 20px;
+  bottom: 76px;
+  width: 480px;
+  max-height: calc(100% - 96px);
+  transform-origin: calc(100% - 60px) calc(100% + 30px);
+}
+
+:host([data-corner^='top']) .sheet {
+  top: 76px;
+  bottom: auto;
+}
+
+:host([data-corner$='left']) .sheet {
+  right: auto;
+  left: 20px;
+}
+
+:host([data-corner='top-right']) .sheet {
+  transform-origin: calc(100% - 60px) -30px;
+}
+
+:host([data-corner='top-left']) .sheet {
+  transform-origin: 60px -30px;
+}
+
+:host([data-corner='bottom-left']) .sheet {
+  transform-origin: 60px calc(100% + 30px);
+}
+
+.sheet .note-body {
+  overflow-y: auto;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+/* ---------- Note: error ---------- */
+
+.alert {
+  display: grid;
+  grid-template-columns: 20px 1fr;
+  gap: 4px 10px;
+}
+
+.alert-icon {
+  grid-row: span 2;
+  width: 20px;
+  height: 20px;
+  margin-top: 1px;
+  color: var(--danger);
+}
+
+.alert-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.alert-title {
+  font-weight: 700;
+}
+
+.alert-detail {
+  color: var(--ink-2);
+  font-size: 14px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  user-select: text;
+}
+
+/* ---------- Screen recording ---------- */
+
+/* Under the note's text: "Record screen", or the recording made for it. */
+.note-media {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
+
+.note-record {
+  gap: 8px;
+}
+
+.rec-dot {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--danger);
+}
+
+.note-video-meta {
+  flex: 1 1 160px;
+  min-width: 0;
+  color: var(--ink-2);
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.note-video {
+  display: block;
+  flex: 1 1 100%;
+  width: 100%;
+  max-height: 200px;
+  border-radius: var(--radius-md);
+  background: var(--ink);
+  object-fit: contain;
+}
+
+.note-media .note-remove {
+  margin-left: 0;
+}
+
+/* While recording, Pointer steps aside: the page is the person's, and only this bar shows. */
+:host(.is-recording) .note,
+:host(.is-recording) .pin,
+:host(.is-recording) .outline,
+:host(.is-recording) .dock,
+:host(.is-recording) .dock-guide,
+:host(.is-recording) .confetti,
+:host(.is-recording) .drafts,
+:host(.is-recording) .toast {
+  display: none !important;
+}
+
+.recbar {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 2147483647;
+  display: none;
+  align-items: center;
+  gap: 10px;
+  height: 44px;
+  padding: 0 6px 0 16px;
+  border-radius: var(--radius-pill);
+  background: var(--ink);
+  color: var(--paper);
+  box-shadow: var(--lift);
+  font: 600 14px/1 var(--font);
+}
+
+:host(.is-recording) .recbar {
+  display: inline-flex;
+}
+
+.recbar-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--danger-light);
+  animation: rec-pulse 1s ease-in-out infinite alternate;
+}
+
+@keyframes rec-pulse {
+  to {
+    opacity: 0.35;
+  }
+}
+
+.recbar-time {
+  font-variant-numeric: tabular-nums;
+}
+
+.recbar-limit {
+  color: rgba(253, 252, 252, 0.6);
+  font-weight: 500;
+}
+
+.recbar-stop {
+  height: 32px;
+  margin-left: 4px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--paper);
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.recbar-stop:focus-visible {
+  outline: none;
+  box-shadow: var(--ring);
+}
+
+/* ---------- Toast ---------- */
+
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  /* as wide as its content: centred with left: 50%, it would otherwise shrink to half the window */
+  width: max-content;
+  min-height: 52px;
+  max-width: min(560px, calc(100% - 32px));
+  padding: 10px 10px 10px 14px;
+  overflow: hidden;
+  border-radius: 16px;
+  background: var(--ink);
+  color: var(--paper);
+  box-shadow: 0 18px 40px -12px rgba(29, 28, 44, 0.6);
+  font: 500 15px/1.35 var(--font);
+  opacity: 0;
+  transform: translate(-50%, 12px);
+  pointer-events: none;
+  transition:
+    opacity 200ms var(--ease),
+    transform 200ms var(--ease);
+}
+
+.toast.is-visible {
+  opacity: 1;
+  transform: translate(-50%, 0);
+  pointer-events: auto;
+}
+
+.toast-icon {
+  flex: none;
+  width: 26px;
+  height: 26px;
+  padding: 6px;
+  border-radius: 50%;
+  background: var(--orange);
+  color: var(--ink);
+}
+
+.toast-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.toast-icon--alert {
+  padding: 0;
+  background: transparent;
+  color: var(--danger-light);
+}
+
+.toast-text {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+  margin-right: auto;
+}
+
+.toast-title {
+  font-weight: 600;
+}
+
+.toast-meta {
+  color: rgba(253, 252, 252, 0.68);
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+
+.toast-link {
+  flex: none;
+  border-radius: var(--radius-sm);
+  color: var(--orange);
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  white-space: nowrap;
+}
+
+.toast-link:hover {
+  text-decoration-thickness: 2px;
+}
+
+.toast-undo {
+  flex: none;
+  height: 34px;
+  padding: 0 14px;
+  border: 1px solid rgba(253, 252, 252, 0.28);
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--paper);
+  cursor: pointer;
+}
+
+.toast-undo:hover {
+  background: rgba(253, 252, 252, 0.1);
+}
+
+.toast-link:focus-visible,
+.toast-undo:focus-visible {
+  outline: none;
+  box-shadow: var(--ring);
+}
+
+/* How long Undo is still possible. The duration is set from index.ts. */
+.toast-timer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: var(--gold);
+  transform-origin: left;
+  animation: drain 10s linear forwards;
+}
+
+@keyframes drain {
+  to {
+    transform: scaleX(0);
+  }
+}
+
+/* On narrow windows the centred toast would cover the launcher, unless it's up top. */
+@media (max-width: 640px) {
+  .toast {
+    bottom: 76px;
+  }
+
+  :host([data-corner^='top']) .toast {
+    bottom: 24px;
+  }
+}
+
+/* ---------- Reduced motion: keep the information, drop the movement ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .launcher,
+  .publish,
+  .draft-pin,
+  .toast {
+    transition: none;
+  }
+
+  .launcher:hover,
+  .publish:hover:not(:disabled),
+  .draft-pin:hover {
+    transform: none;
+  }
+
+  .publish.is-busy .publish-count {
+    animation: none;
+  }
+
+  .recbar-dot,
+  .dock-guide-line {
+    animation: none;
+  }
+
+  .dock-guide-pulse {
+    display: none;
+  }
+
+  .note.is-open,
+  .pin.is-visible {
+    animation: none;
+  }
+
+  .progress-seg.is-active::after {
+    animation: none;
+    transform: scaleX(0.5);
+  }
+}

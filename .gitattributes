@@ -1,0 +1,8 @@
+# Always LF in the repository and in checkouts, whatever core.autocrlf says: the build bakes
+# text into the bundles as it is, and a CI build or a reviewer's rebuild from the source zip must
+# match a local one byte for byte.
+* text=auto eol=lf
+*.png binary
+*.otf binary
+*.zip binary
+*.xpi binary

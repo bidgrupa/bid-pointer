@@ -1,0 +1,218 @@
+<!doctype html>
+<!-- A made-up hotel's staging site for the store screenshots (render.mjs). Its sections are wrapped
+     the way bid's CMS blocks are (a hidden "[Name - id]" label first), so Pointer names them. -->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Sea-view rooms on the Adriatic, a few steps from the water | Hotel Lumen</title>
+    <meta name="description" content="Rooms and suites by the sea, with breakfast on the terrace and the beach a minute away." />
+    <link rel="canonical" href="https://www.hotel-lumen.example/rooms/sea-view" />
+    <meta property="og:title" content="Sea-view rooms at Hotel Lumen" />
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: #fbf8f4;
+        color: #23201d;
+        font: 16px/1.6 system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      }
+      .hidden {
+        display: none;
+      }
+      header {
+        display: flex;
+        align-items: center;
+        gap: 36px;
+        height: 68px;
+        padding: 0 44px;
+        background: #fbf8f4;
+      }
+      .logo {
+        font: 600 22px/1 Georgia, 'Times New Roman', serif;
+        letter-spacing: 0.32em;
+      }
+      nav {
+        display: flex;
+        gap: 28px;
+        margin-left: auto;
+        color: #5b544d;
+        font-size: 15px;
+      }
+      .book-outline {
+        padding: 9px 18px;
+        border: 1px solid #23201d;
+        border-radius: 999px;
+        font-size: 14px;
+        font-weight: 600;
+      }
+      .hero {
+        position: relative;
+        height: 430px;
+        margin: 0 44px;
+        overflow: hidden;
+        border-radius: 22px;
+        background:
+          radial-gradient(120px 120px at 74% 47%, #fff3d6 0%, #ffd9a8 35%, rgba(255, 200, 150, 0) 70%),
+          linear-gradient(180deg, #f6b38e 0%, #f7c9a0 34%, #f3d8bb 49%, #6f8fa6 50%, #4b6f8a 70%, #34536c 100%);
+      }
+      .hero::after {
+        content: '';
+        position: absolute;
+        inset: 49% 0 0;
+        background: repeating-linear-gradient(180deg, rgba(255, 236, 214, 0.18) 0 2px, transparent 2px 13px);
+      }
+      .hills {
+        position: absolute;
+        right: 0;
+        bottom: 50%;
+        left: 0;
+        height: 70px;
+        background: #9a7f87;
+        clip-path: polygon(0 100%, 0 55%, 12% 35%, 24% 60%, 38% 20%, 52% 62%, 63% 45%, 76% 70%, 88% 40%, 100% 58%, 100% 100%);
+        opacity: 0.55;
+      }
+      .hero-text {
+        position: absolute;
+        top: 64px;
+        left: 56px;
+        z-index: 1;
+        max-width: 520px;
+        color: #fffaf3;
+      }
+      .kicker {
+        font-size: 13px;
+        font-weight: 600;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        opacity: 0.9;
+      }
+      h1 {
+        margin: 14px 0 12px;
+        font: 600 58px/1.04 Georgia, 'Times New Roman', serif;
+        text-shadow: 0 2px 18px rgba(80, 40, 20, 0.25);
+      }
+      .hero-text p {
+        margin: 0 0 26px;
+        font-size: 18px;
+        text-shadow: 0 1px 10px rgba(80, 40, 20, 0.3);
+      }
+      .buttons {
+        display: flex;
+        gap: 12px;
+      }
+      .btn {
+        display: inline-block;
+        padding: 13px 26px;
+        border-radius: 999px;
+        font-size: 15px;
+        font-weight: 600;
+      }
+      .btn-primary {
+        background: #23201d;
+        color: #fffaf3;
+      }
+      .btn-light {
+        background: rgba(255, 250, 243, 0.92);
+        color: #23201d;
+      }
+      .rooms {
+        padding: 44px 44px 60px;
+      }
+      .rooms h2 {
+        margin: 0 0 6px;
+        font: 600 32px/1.2 Georgia, 'Times New Roman', serif;
+      }
+      .rooms > p {
+        margin: 0 0 24px;
+        color: #6b635b;
+      }
+      .cards {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 22px;
+      }
+      .card {
+        overflow: hidden;
+        border-radius: 18px;
+        background: #fff;
+        box-shadow: 0 1px 0 rgba(35, 32, 29, 0.06), 0 12px 30px -18px rgba(35, 32, 29, 0.35);
+      }
+      .card img {
+        display: block;
+        width: 100%;
+        height: 170px;
+        object-fit: cover;
+      }
+      .card div {
+        padding: 16px 20px 20px;
+      }
+      .card h3 {
+        margin: 0;
+        font: 600 20px/1.3 Georgia, 'Times New Roman', serif;
+      }
+      .card span {
+        color: #6b635b;
+        font-size: 14px;
+      }
+      footer {
+        padding: 28px 44px;
+        background: #23201d;
+        color: #d9cfc4;
+        font-size: 14px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="relative">
+      <div class="hidden"><span>[SiteHeader - 1001]</span></div>
+      <header>
+        <span class="logo">LUMEN</span>
+        <nav><span>Rooms</span><span>Dining</span><span>Spa</span><span>Offers</span></nav>
+        <span class="book-outline">Book a stay</span>
+      </header>
+    </div>
+
+    <div class="relative">
+      <div class="hidden"><span>[HeroBanner - 1042]</span></div>
+      <section class="hero">
+        <div class="hills"></div>
+        <div class="hero-text">
+          <div class="kicker">Hotel Lumen · Adriatic coast</div>
+          <h1>Wake up to the sea</h1>
+          <p>Rooms and suites a few steps from the water.</p>
+          <div class="buttons">
+            <a class="btn btn-primary" href="#book">Book now</a>
+            <a class="btn btn-light" href="#rooms">See the rooms</a>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div class="relative">
+      <div class="hidden"><span>[RoomCards - 2210]</span></div>
+      <section class="rooms" id="rooms">
+        <h2>Our rooms</h2>
+        <p>Every room has a balcony, and every balcony faces the bay.</p>
+        <div class="cards">
+          <article class="card">
+            <img alt="A bright double room with a balcony over the bay" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 170'%3E%3Crect width='300' height='170' fill='%23e9d8c4'/%3E%3Crect x='170' y='20' width='110' height='120' rx='6' fill='%2388a9bf'/%3E%3Crect x='20' y='100' width='130' height='40' rx='8' fill='%23fffaf3'/%3E%3Crect x='20' y='88' width='130' height='16' rx='6' fill='%23c9a98a'/%3E%3C/svg%3E" />
+            <div><h3>Classic Double</h3><span>From €140 a night</span></div>
+          </article>
+          <article class="card">
+            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 170'%3E%3Crect width='300' height='170' fill='%23f1e4d3'/%3E%3Crect x='20' y='18' width='150' height='118' rx='6' fill='%23f2b48f'/%3E%3Crect x='20' y='88' width='150' height='48' fill='%235f86a2'/%3E%3Crect x='190' y='96' width='92' height='44' rx='8' fill='%23fffaf3'/%3E%3C/svg%3E" />
+            <div><h3>Sea View Superior</h3><span>From €190 a night</span></div>
+          </article>
+          <article class="card">
+            <img alt="A suite with a terrace and loungers" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 170'%3E%3Crect width='300' height='170' fill='%23dfe7ea'/%3E%3Crect y='100' width='300' height='70' fill='%23c4b29c'/%3E%3Crect x='30' y='84' width='90' height='22' rx='10' fill='%23fffaf3'/%3E%3Crect x='150' y='84' width='90' height='22' rx='10' fill='%23fffaf3'/%3E%3Ccircle cx='250' cy='40' r='18' fill='%23ffd9a8'/%3E%3C/svg%3E" />
+            <div><h3>Terrace Suite</h3><span>From €260 a night</span></div>
+          </article>
+        </div>
+      </section>
+    </div>
+
+    <footer>Hotel Lumen · Obala 12 · +385 00 000 000</footer>
+  </body>
+</html>

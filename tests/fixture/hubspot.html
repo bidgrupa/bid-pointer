@@ -1,0 +1,435 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Help Desk | Redirekcijski lanac Lumen</title>
+    <!--
+      A stand-in for a HubSpot Help Desk ticket, for the smoke tests (scripts/hubspot-check.mjs). It
+      keeps what Pointer reads, with HubSpot's own data-test-id and data-selenium-test hooks as a real
+      ticket page has them (see src/hubspot/read.ts): the header's Actions button, the ticket's name,
+      number and owner, the conversation (visitor and agent messages under day labels), a file on a
+      message, the priority and category properties, and the contact and company cards. HubSpot's
+      generated class names are left out; the look is approximated here.
+    -->
+    <style>
+      body {
+        margin: 0;
+        background: #f5f8fa;
+        color: #213343;
+        font: 14px/1.5 'HubSpot Sans', Arial, sans-serif;
+      }
+      button {
+        font: inherit;
+      }
+      .nav {
+        height: 48px;
+        background: #fff;
+        border-bottom: 1px solid #dbe1e7;
+      }
+      .header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        height: 56px;
+        padding: 0 16px;
+        border-bottom: 1px solid #dbe1e7;
+        background: #fff;
+      }
+      .header .title {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex: 1;
+        min-width: 0;
+        font-size: 16px;
+        font-weight: 600;
+      }
+      .header a {
+        color: #0068b1;
+        text-decoration: none;
+      }
+      .header .sep {
+        margin: 0;
+        color: #99afc4;
+      }
+      .header .id {
+        margin: 0;
+        color: #516f90;
+        font-size: 14px;
+        font-weight: 400;
+      }
+      .measure {
+        position: absolute;
+        visibility: hidden;
+        white-space: nowrap;
+      }
+      .tools {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .tools p {
+        margin: 0 4px 0 0;
+        color: #516f90;
+      }
+      .icon-button {
+        width: 32px;
+        height: 32px;
+        border: 0;
+        border-radius: 999px;
+        background: transparent;
+        color: #516f90;
+        cursor: pointer;
+      }
+      [data-button-use='primary'] {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        height: 32px;
+        padding: 0 16px;
+        border: 1px solid #00494b;
+        border-radius: 10000000px;
+        background: #00494b;
+        color: #fff;
+        font: 600 14px/20px 'HubSpot Sans', Arial, sans-serif;
+        cursor: pointer;
+      }
+      .caret {
+        width: 0;
+        height: 0;
+        border: 4px solid transparent;
+        border-top-color: currentColor;
+        margin-top: 4px;
+      }
+      .overview {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 360px;
+        height: calc(100vh - 105px);
+      }
+      .thread {
+        overflow: auto;
+        padding: 16px 24px 120px;
+      }
+      [data-test-id='dashed-label'] {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin: 16px 0;
+        color: #516f90;
+        font-size: 12px;
+      }
+      [data-test-id='dashed-label']::before,
+      [data-test-id='dashed-label']::after {
+        content: '';
+        flex: 1;
+        border-top: 1px dashed #cbd6e2;
+      }
+      [data-test-id='dashed-label'] p {
+        margin: 0;
+      }
+      [data-test-id^='primary-message-'] {
+        margin: 0 0 16px;
+      }
+      [data-test-id='primary-message-content-wrapper'] {
+        padding: 16px 20px;
+        border: 1px solid #dbe1e7;
+        border-radius: 12px;
+        background: #fff;
+        box-shadow: 0 1px 2px rgba(33, 51, 67, 0.06);
+      }
+      [data-test-id='primary-message-agent'] [data-test-id='primary-message-content-wrapper'] {
+        background: #f0faf9;
+      }
+      [data-test-id='primary-message-header-content'] {
+        display: flex;
+        gap: 8px;
+        align-items: baseline;
+      }
+      [data-test-id='sender-header-content-timestamp'],
+      [data-test-id='recipient-line'],
+      .channel {
+        color: #516f90;
+        font-size: 12px;
+      }
+      [data-test-id='email-message-content'] {
+        margin-top: 12px;
+      }
+      [data-test-id='file-attachments-grid'] {
+        display: flex;
+        gap: 8px;
+        margin-top: 12px;
+      }
+      [data-test-id='file-attachment-wrapper'] {
+        position: relative;
+        max-width: 300px;
+      }
+      [data-test-id='file-attachment-wrapper'] img {
+        display: block;
+        max-width: 240px;
+        border-radius: 8px;
+      }
+      .sidebar {
+        overflow: auto;
+        padding: 16px;
+        border-left: 1px solid #dbe1e7;
+        background: #fff;
+      }
+      .sidebar h2 {
+        margin: 16px 0 8px;
+        font-size: 14px;
+      }
+      .sidebar label {
+        display: block;
+        color: #516f90;
+        font-size: 12px;
+      }
+      .sidebar .prop {
+        margin-bottom: 12px;
+      }
+      [data-test-id='ticket-header-hubspot_owner_id-dropdown'] {
+        padding: 4px 10px;
+        border: 1px solid #cbd6e2;
+        border-radius: 8px;
+        background: #fff;
+      }
+      .composer {
+        position: fixed;
+        bottom: 16px;
+        left: 24px;
+        width: calc(100% - 432px);
+        height: 64px;
+        border: 1px solid #dbe1e7;
+        border-radius: 12px;
+        background: #fff;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="nav"></div>
+    <div class="header">
+      <button class="icon-button" data-test-id="help-desk-list-view-backBtn" type="button" aria-label="Back">‹</button>
+      <div class="title" role="heading">
+        <div data-test-id="ticket-header-name-link">
+          <a href="https://app-eu1.hubspot.com/contacts/147607823/record/0-5/100200300400?eschref=%2Fhelp-desk"
+            ><span><span><span>Redirekcijski lanac Lumen</span></span></span><span class="measure">Redirekcijski lanac Lumen</span></a
+          >
+        </div>
+        <p class="sep">|</p>
+        <div data-test-id="ticket-header-contact-detail-link">
+          <a href="https://app-eu1.hubspot.com/contacts/147607823/record/0-1/679811798222?eschref=%2Fhelp-desk"><span><span><span>Lea Novak</span></span></span></a>
+        </div>
+        <p class="sep">|</p>
+        <button type="button" data-button-use="unstyled" style="border: 0; background: none; padding: 0">
+          <p class="id" data-test-id="ticket-header-ticket-id">#100200300400</p>
+        </button>
+      </div>
+      <div class="tools">
+        <div data-test-id="ticket-selector">
+          <p data-test-id="ticket-selector-text">1 of 16 tickets</p>
+        </div>
+        <div><button class="icon-button" data-test-id="snooze-dropdown-button" aria-label="Snooze until" type="button">☾</button></div>
+        <button data-test-id="helpdesk-more-actions-dropdown" data-button-use="primary" type="button" aria-haspopup="true">
+          <span><span><span>Actions</span><span class="caret" data-test-id="dropdown-caret"></span></span></span>
+        </button>
+        <div><button class="icon-button" data-test-id="crm-sidebar-toggle" aria-label="Toggle contextual sidebar" type="button">▤</button></div>
+      </div>
+    </div>
+
+    <div class="overview">
+      <div class="thread">
+        <div data-test-id="inbox-thread-loaded">
+          <div data-test-id="scroll-viewport">
+            <div data-test-id="floating-date-pill-overlay"><p hidden>October 22</p></div>
+            <div data-test-id="virtualParentRef">
+              <div data-test-id="dashed-label">
+                <div data-test-id="non-transparent-dash-label"><span><p>October 22</p></span></div>
+              </div>
+
+              <div data-test-id="spacing-wrapper">
+                <div data-test-id="primary-message-visitor">
+                  <div data-test-id="primary-message-content-wrapper">
+                    <div data-test-id="primary-message-header-content">
+                      <strong><span data-test-id="sender-name"><span>Lea Novak</span></span></strong>
+                      <span data-test-id="sender-header-content-timestamp">1:25 PM</span>
+                      <span class="channel" data-test-id="header-wrapper-channel-component">Email</span>
+                    </div>
+                    <div data-test-id="recipient-line">To: support@help-desk.example, support@bid.hr, Nina Perić, ivo@partner-agency.example</div>
+                    <div data-test-id="primary-message-content-section">
+                      <div data-test-id="primary-message-body-content">
+                        <div data-test-id="primary-message-content-section">
+                          <div data-test-id="primary-message-body-content">
+                            <div data-test-id="email-message-content">
+                              <div>Pozdrav,</div>
+                              <div><br /></div>
+                              <div>Tijekom SEO analize Lumenove web stranice pronađeno je 5 linkova s problemom redirect loop, zbog čega se navedene stranice ne mogu ispravno otvoriti.</div>
+                              <div><br /></div>
+                              <div>Pokušala sam provjeriti i ispraviti redirekcije, ali problem je i dalje prisutan.</div>
+                              <div><br /></div>
+                              <div>Ljubazno vas molim da provjerite što uzrokuje navedene redirect loopove i možete li ih ispraviti.</div>
+                              <div><br /></div>
+                              <div>U nastavku šaljem popis linkova.</div>
+                              <div><br /></div>
+                              <div>
+                                <a href="https://docs.google.com/spreadsheets/d/1ExampleSheetForPointerTests00000000000000000/edit?usp=sharing"
+                                  >https://docs.google.com/spreadsheets/d/1ExampleSheetForPointerTests00000000000000000/edit?usp=sharing</a
+                                >
+                              </div>
+                              <div><br /></div>
+                              <div>Hvala unaprijed na pomoći 🙂</div>
+                              <div><br /></div>
+                              <div>Lp,</div>
+                              <div>
+                                <div><span><b>Lea</b></span> <span><b>Novak</b></span></div>
+                                <div><span>Suradnik u</span> <span>marketingu</span> <span>| Marketing associate</span></div>
+                                <div>M: <a href="tel:+385991234567">+385 99 123 4567</a></div>
+                                <div>E: <a href="mailto:lea@seaside-marketing.example">lea@seaside-marketing.example</a></div>
+                                <div>
+                                  <img
+                                    src="https://app-eu1.hubspot.com/api/filemanager/api/v2/files/201/signed-url-redirect?&portalId=147607823"
+                                    width="159"
+                                    height="113"
+                                  />
+                                </div>
+                                <div>
+                                  <span
+                                    ><img
+                                      src="https://app-eu1.hubspot.com/api/filemanager/api/v2/files/202/signed-url-redirect?&portalId=147607823"
+                                      width="27"
+                                      height="24" /></span
+                                  ><span>Before you print think about the environment.</span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div data-test-id="dashed-label">
+                <div data-test-id="transparent-dash-label"><span><button type="button">Conversation created</button></span></div>
+              </div>
+
+              <div data-test-id="spacing-wrapper">
+                <div data-test-id="primary-message-agent">
+                  <div data-test-id="primary-message-content-wrapper">
+                    <div data-test-id="primary-message-header-content">
+                      <strong><span data-test-id="sender-name"><span>Tea Babić</span></span></strong>
+                      <span data-test-id="sender-header-content-timestamp">3:10 PM</span>
+                      <span class="channel" data-test-id="header-wrapper-channel-component">Email</span>
+                    </div>
+                    <div data-test-id="recipient-line">To: Lea Novak</div>
+                    <div data-test-id="primary-message-body-content">
+                      <div data-test-id="email-message-content">
+                        <div>Pozdrav Lea, hvala, provjeravamo i javljamo se.</div>
+                        <div>Tea</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div data-test-id="dashed-label">
+                <div data-test-id="non-transparent-dash-label"><span><p>October 23</p></span></div>
+              </div>
+
+              <div data-test-id="spacing-wrapper" id="latest">
+                <div data-test-id="primary-message-visitor">
+                  <div data-test-id="primary-message-content-wrapper">
+                    <div data-test-id="primary-message-header-content">
+                      <strong><span data-test-id="sender-name"><span>Lea Novak</span></span></strong>
+                      <span data-test-id="sender-header-content-timestamp">9:40 AM</span>
+                      <span class="channel" data-test-id="header-wrapper-channel-component">Email</span>
+                    </div>
+                    <div data-test-id="recipient-line">To: support@help-desk.example, support@bid.hr</div>
+                    <div data-test-id="primary-message-body-content">
+                      <div data-test-id="email-message-content">
+                        <div>Još nešto: na mobitelu cookie banner prekriva gumb Book now na naslovnici, šaljem screenshot.</div>
+                        <div>
+                          <img src="https://app-eu1.hubspot.com/api/filemanager/api/v2/files/301/signed-url-redirect?&portalId=147607823&size=preview" width="240" height="135" alt="" />
+                        </div>
+                        <div>U privitku je i screenshot jedne od petlji.</div>
+                      </div>
+                    </div>
+                    <div data-test-id="AttachmentsFooter">
+                      <div data-test-id="file-attachments-grid">
+                        <div data-test-id="file-attachment-wrapper">
+                          <img src="https://app-eu1.hubspot.com/api/filemanager/api/v2/files/302/signed-url-redirect?&portalId=147607823&size=thumb" width="200" height="112" alt="redirect-loop.png" />
+                          <a
+                            href="https://app-eu1.hubspot.com/api/filemanager/api/v2/files/302/signed-url-redirect?&portalId=147607823&response-content-disposition=attachment%3Bfilename%3D%22redirect-loop.png%22"
+                            download
+                            ><svg data-test-id="download-attachment-button" width="16" height="16" aria-label="Download"></svg
+                          ></a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="composer" data-test-id="composer-editor"><div role="textbox" aria-label="Reply to conversation"></div></div>
+        </div>
+      </div>
+
+      <aside class="sidebar" data-test-id="help-desk-ticket-sidebar">
+        <div data-test-id="sticky-subject-header">
+          <label>Ticket owner</label>
+          <button data-test-id="ticket-header-hubspot_owner_id-dropdown" data-button-use="control" type="button">
+            <span><span><div data-test-id="reassignment-selected-agent"><i18n-string>Tea Babić</i18n-string></div></span></span>
+          </button>
+        </div>
+        <div data-test-id="card-wrapper-PROPERTIES_V3/0-5/HELPDESK_SIDEBAR">
+          <h2>About this ticket</h2>
+          <span data-test-id="hs_ticket_priority"
+            ><div class="prop">
+              <label>Priority</label><span data-selenium-test="property-input-hs_ticket_priority">High</span>
+            </div></span
+          >
+          <span data-test-id="hs_ticket_category"
+            ><div class="prop">
+              <label>Category</label><button type="button" data-selenium-test="property-input-hs_ticket_category" style="border: 0; background: none; padding: 0"><span>--</span></button>
+            </div></span
+          >
+          <span data-test-id="createdate"
+            ><div class="prop"><label>Create date</label><span data-selenium-test="property-input-createdate">10/22/2026 1:25 PM GMT+2</span></div></span
+          >
+        </div>
+        <div data-test-id="card-wrapper-ASSOCIATION_V3/0-1">
+          <h2>Contacts (1)</h2>
+          <div data-test-id="chicklet-679811798222" data-selenium-test="chicklet">
+            <div data-test-id="contact-chicklet-title">
+              <a href="https://app-eu1.hubspot.com/contacts/147607823/record/0-1/679811798222"><span data-test-id="contact-chicklet-title-link">Lea Novak</span></a>
+            </div>
+            <div data-test-id="contact-chicklet-job-title"><p>Marketing associate</p></div>
+            <div data-test-id="contact-chicklet-email">Email: <a data-test-id="contact-chicklet-email" href="mailto:lea@seaside-marketing.example">lea@seaside-marketing.example</a></div>
+          </div>
+        </div>
+        <div data-test-id="card-wrapper-ASSOCIATION_V3/0-2">
+          <h2>Companies (1)</h2>
+          <div data-test-id="chicklet-9001" data-selenium-test="chicklet">
+            <div data-test-id="company-chicklet-title"><a href="https://app-eu1.hubspot.com/contacts/147607823/record/0-2/9001"><span data-test-id="company-chicklet-title-link">Seaside Marketing</span></a></div>
+          </div>
+        </div>
+      </aside>
+    </div>
+    <script>
+      // what the tests watch: presses reaching HubSpot's header, and keys reaching HubSpot's shortcuts
+      window.__headerClicks = 0;
+      window.__hubspotKeys = [];
+      document.querySelector('.header').addEventListener('click', () => window.__headerClicks++);
+      document.addEventListener('keydown', (e) => window.__hubspotKeys.push(e.key));
+      // HubSpot re-renders the header row now and then; this does what that does to Pointer's button
+      window.rerenderTools = () => {
+        const tools = document.querySelector('.tools');
+        const actions = tools.querySelector('[data-test-id="helpdesk-more-actions-dropdown"]');
+        tools.append(actions);
+      };
+      // another ticket's conversation, without emails (a ticket from a form)
+      window.hideThread = () => (document.querySelector('[data-test-id="inbox-thread-loaded"]').style.display = 'none');
+      window.showThread = () => (document.querySelector('[data-test-id="inbox-thread-loaded"]').style.display = '');
+    </script>
+  </body>
+</html>

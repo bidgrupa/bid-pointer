@@ -1,0 +1,10 @@
+{
+  "_comment": "Aliases for Vercel project slugs (without the pages- prefix) that don't fuzzy-match a ClickUp folder/list name. Everything else is matched by name against the live DEVELOPMENT hierarchy. An alias is the strongest URL match, so a note starts with it unless the site has a last-used project.",
+  "aliases": {
+    "hdz": "901418360025",
+    "hotel-dubrovnik": "901418360025",
+    "hotel-dubrovnik-zagreb": "901418360025",
+    "bid": "901415053456",
+    "bidgrupa": "901415053456"
+  }
+}

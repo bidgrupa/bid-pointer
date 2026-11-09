@@ -1,0 +1,34 @@
+{
+  "name": "bid-pointer",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Chrome, Edge, Firefox and Safari extension: click anything on a bid staging or live site, say what is wrong, get a ClickUp task.",
+  "scripts": {
+    "build": "node scripts/make-icons.mjs && node build.mjs",
+    "dev": "node scripts/make-icons.mjs && node build.mjs --watch",
+    "typecheck": "tsc --noEmit",
+    "test": "node --test tests/",
+    "smoke": "node scripts/smoke.mjs --browser=chrome",
+    "smoke:edge": "node scripts/smoke.mjs --browser=edge",
+    "package": "node scripts/make-icons.mjs && node build.mjs && node scripts/package.mjs",
+    "smoke:firefox": "node scripts/smoke-firefox.mjs",
+    "lint:firefox": "pnpm dlx web-ext@10 lint --source-dir dist-firefox",
+    "sign:firefox": "pnpm dlx web-ext@10 sign --source-dir dist-firefox --channel unlisted --artifacts-dir web-ext-artifacts",
+    "release": "pnpm typecheck && pnpm test && node scripts/make-icons.mjs && node build.mjs && node scripts/package.mjs",
+    "screenshots": "node store/chrome/src/render.mjs"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.3.0",
+    "esbuild": "^0.28.2",
+    "puppeteer-core": "^25.11.0",
+    "typescript": "^7.0.2"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild"
+    ]
+  },
+  "packageManager": "pnpm@10.34.5",
+  "license": "UNLICENSED"
+}

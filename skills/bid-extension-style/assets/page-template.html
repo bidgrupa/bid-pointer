@@ -1,0 +1,160 @@
+<!doctype html>
+<!--
+  Skeleton of an extension page in the bid Pointer look (options page shown).
+  For a popup, add class="popup" to <body>: the masthead shrinks and groups stack.
+  Replace the mark, the name, the sentence under it and the groups with the extension's own.
+-->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Extension name options</title>
+    <link rel="stylesheet" href="page.css" />
+  </head>
+  <body>
+    <header class="masthead">
+      <div class="wrap masthead-inner">
+        <!-- The product mark: a thin line icon, 20px viewBox, 1.6 stroke, round caps. Draw your own. -->
+        <svg class="mark" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true">
+          <circle cx="10" cy="10" r="5.25" />
+          <path d="M10 1.75v3M10 15.25v3M1.75 10h3M15.25 10h3" />
+          <circle cx="10" cy="10" r="1.5" fill="currentColor" stroke="none" />
+        </svg>
+        <div>
+          <h1>Extension name</h1>
+          <p>One sentence on what it does for the person, in plain words.</p>
+        </div>
+      </div>
+    </header>
+
+    <main class="wrap">
+      <!-- A first-run walkthrough: numbered steps, the current one orange. -->
+      <section class="group" aria-labelledby="connect-title">
+        <div class="group-head">
+          <h2 id="connect-title">Connect your account</h2>
+          <p>Why this is needed and how long it takes, in a sentence or two.</p>
+        </div>
+        <div class="group-body">
+          <ol class="steps">
+            <li class="step is-done">
+              <span class="step-num">1</span>
+              <div class="step-body">
+                <p class="step-title">Open the settings</p>
+                <a class="btn btn--primary" href="#" target="_blank" rel="noopener">Open settings</a>
+              </div>
+            </li>
+            <li class="step is-current">
+              <span class="step-num">2</span>
+              <div class="step-body">
+                <p class="step-title">Paste your key</p>
+                <div class="secret">
+                  <input id="apiKey" type="password" autocomplete="off" spellcheck="false" placeholder="key_…" />
+                  <button class="icon-btn" type="button" aria-label="Show key" title="Show key"><!-- eye icon --></button>
+                </div>
+                <p id="keyStatus" class="status" role="status"></p>
+              </div>
+            </li>
+          </ol>
+          <details class="faq">
+            <summary>Is this safe?</summary>
+            <p>One short paragraph that answers it.</p>
+          </details>
+        </div>
+      </section>
+
+      <!-- Once something is set up -->
+      <section class="group" aria-labelledby="account-title">
+        <div class="group-head">
+          <h2 id="account-title">Account</h2>
+          <p>Who the extension acts as.</p>
+        </div>
+        <div class="group-body">
+          <div class="done-panel">
+            <span class="done-panel-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7" /></svg></span>
+            <div class="done-panel-body">
+              <p class="done-panel-title">Connected as Ana (ana@bid.hr)</p>
+              <p class="help">You're all set.</p>
+            </div>
+            <button class="btn btn--small" type="button">Change</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="group" aria-labelledby="behaviour-title">
+        <div class="group-head">
+          <h2 id="behaviour-title">Behaviour</h2>
+          <p>How the extension works on the page.</p>
+        </div>
+        <div class="group-body">
+          <div class="field">
+            <label for="assignee">Assign to</label>
+            <select id="assignee" class="select select--person">
+              <option>Mate</option>
+            </select>
+            <p class="help">You can still pick someone else each time.</p>
+          </div>
+          <label class="switch">
+            <input id="review" type="checkbox" role="switch" />
+            <span class="switch-label">Review before sending</span>
+            <span class="switch-help">Shows what will be sent for a quick edit first.</span>
+          </label>
+          <div class="field">
+            <span class="label">Shortcut</span>
+            <span class="keys"><kbd>Alt</kbd><kbd>Shift</kbd><kbd>P</kbd></span>
+          </div>
+          <p class="callout">A quiet note that matters, on creme.</p>
+        </div>
+      </section>
+
+      <section class="group" aria-labelledby="recent-title">
+        <div class="group-head">
+          <h2 id="recent-title">Recent</h2>
+          <p>Your last 20 items.</p>
+        </div>
+        <div class="group-body">
+          <ul class="rows">
+            <li>
+              <div class="row-main">
+                <a class="row-title" href="#" target="_blank" rel="noopener">Hero: CTA overlaps the title on mobile</a>
+                <div class="row-meta"><span>Cresanka › Development</span><span>06.10.2026 12:11</span><span class="tag is-ok">Screenshot attached</span></div>
+              </div>
+              <button class="btn btn--small" type="button">Forget</button>
+            </li>
+            <li>
+              <div class="row-main">
+                <a class="row-title" href="#" target="_blank" rel="noopener">RoomList: Prices show without a currency</a>
+                <div class="row-meta"><span>Bluesun</span><span class="tag is-bad">Screenshot missing</span></div>
+                <p class="row-error">upload failed: 400 Attachment too large</p>
+              </div>
+            </li>
+          </ul>
+          <!-- With nothing to show: <p class="empty">No items yet. Items you create show up here.</p> -->
+        </div>
+      </section>
+
+      <section class="group" aria-labelledby="advanced-title">
+        <div class="group-head">
+          <h2 id="advanced-title">Advanced</h2>
+          <p>Only change these if you maintain the extension.</p>
+        </div>
+        <div class="group-body">
+          <details class="disclosure">
+            <summary class="btn">Show advanced settings</summary>
+            <div class="disclosure-body">
+              <div class="field">
+                <label for="endpoint">Endpoint</label>
+                <input id="endpoint" type="url" />
+              </div>
+              <div class="actions">
+                <button class="btn" type="button">Test connection</button>
+                <span class="status is-ok" role="status">Works</span>
+              </div>
+            </div>
+          </details>
+        </div>
+      </section>
+    </main>
+
+    <div class="saved" role="status">Saved</div>
+  </body>
+</html>

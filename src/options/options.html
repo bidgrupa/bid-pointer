@@ -1,0 +1,326 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>bid Pointer options</title>
+    <link rel="stylesheet" href="options.css" />
+  </head>
+  <body>
+    <header class="masthead">
+      <div class="wrap masthead-inner">
+        <svg class="mark" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true">
+          <circle cx="10" cy="10" r="5.25" />
+          <path d="M10 1.75v3M10 15.25v3M1.75 10h3M15.25 10h3" />
+          <circle cx="10" cy="10" r="1.5" fill="currentColor" stroke="none" />
+        </svg>
+        <div>
+          <h1>bid Pointer</h1>
+          <p>Click anything on a staging site, say what's wrong, and Pointer files a ClickUp task with a marked-up screenshot.</p>
+        </div>
+      </div>
+    </header>
+
+    <main class="wrap">
+      <!-- Only shown when the browser has no site access for Pointer (Firefox lets people turn it off). -->
+      <section id="accessGroup" class="group" aria-labelledby="access-title" hidden>
+        <div class="group-head">
+          <h2 id="access-title">Site access</h2>
+          <p>Pointer needs to see websites to show up on your sites, take screenshots and reach ClickUp.</p>
+        </div>
+        <div class="group-body">
+          <p class="callout callout--warn">Your browser isn't letting Pointer read websites right now, so it can't appear or create tasks.</p>
+          <div class="actions">
+            <button id="grantAccess" class="btn btn--primary" type="button">Allow access to websites</button>
+            <span id="accessStatus" class="status" role="status"></span>
+          </div>
+        </div>
+      </section>
+
+      <section id="setupGroup" class="group" aria-labelledby="setup-title">
+        <div class="group-head">
+          <h2 id="setup-title">Connect ClickUp</h2>
+          <p>Pointer creates tasks as you, so it needs your personal ClickUp API token. It takes about a minute, and the token stays in this browser.</p>
+        </div>
+
+        <div class="group-body">
+          <ol id="setupSteps" class="steps">
+            <li class="step is-current" data-step="open">
+              <span class="step-num" aria-hidden="true">1</span>
+              <div class="step-body">
+                <p class="step-title">Open your ClickUp settings</p>
+                <p class="help">This opens ClickUp's Apps settings in a new tab. Log in first if ClickUp asks you to.</p>
+                <a id="openClickUp" class="btn btn--primary" href="https://app.clickup.com/settings/apps" target="_blank" rel="noopener">Open ClickUp settings</a>
+                <p class="help">Prefer to click there yourself? In ClickUp, click your avatar, then Settings, then Apps.</p>
+              </div>
+            </li>
+
+            <li class="step" data-step="copy">
+              <span class="step-num" aria-hidden="true">2</span>
+              <div class="step-body">
+                <p class="step-title">Copy your API token</p>
+                <p class="help">Find the API Token section. If it's empty, click Generate. Then click Copy.</p>
+
+                <!-- A simplified sketch of ClickUp's Apps page, not a screenshot. -->
+                <figure class="sketch" aria-hidden="true">
+                  <div class="sketch-bar">
+                    <span class="sketch-dots"><i></i><i></i><i></i></span>
+                    <span class="sketch-url">app.clickup.com/settings/apps</span>
+                  </div>
+                  <div class="sketch-page">
+                    <div class="sketch-nav">
+                      <span>Settings</span>
+                      <span>Profile</span>
+                      <span>Notifications</span>
+                      <span class="is-here">Apps</span>
+                    </div>
+                    <div class="sketch-main">
+                      <span class="sketch-h">Apps</span>
+                      <span class="sketch-label">API Token</span>
+                      <div class="sketch-token">
+                        <span class="sketch-field">pk_8216402_••••••••••••</span>
+                        <span class="sketch-btn">Regenerate</span>
+                        <span class="sketch-btn is-target">Copy<i class="sketch-pin"></i></span>
+                      </div>
+                    </div>
+                  </div>
+                </figure>
+
+                <p class="tip"><b>Already have a token?</b> Click Copy, not Regenerate. Regenerating replaces the old token, and anything else that uses it stops working.</p>
+              </div>
+            </li>
+
+            <li class="step" data-step="paste">
+              <span class="step-num" aria-hidden="true">3</span>
+              <div class="step-body">
+                <label class="step-title" for="clickupToken">Paste it here</label>
+                <div class="secret">
+                  <input id="clickupToken" type="password" autocomplete="off" spellcheck="false" placeholder="pk_…" />
+                  <button id="revealInput" class="icon-btn" type="button" aria-controls="clickupToken" aria-pressed="false" aria-label="Show token" title="Show token"></button>
+                </div>
+                <p id="tokenStatus" class="status" role="status"></p>
+              </div>
+            </li>
+          </ol>
+
+          <details id="tokenFaq" class="faq">
+            <summary>What can Pointer do with this token?</summary>
+            <p>It creates tasks, attaches screenshots and reads your projects and team, all as you. The token is stored only in this browser and sent only to ClickUp. To cut Pointer off at any time, click Regenerate in ClickUp; the old token stops working at once.</p>
+          </details>
+
+          <div id="setupDone" class="connected" hidden>
+            <span class="connected-icon" aria-hidden="true">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 8.5l3 3 6-7" /></svg>
+            </span>
+            <div class="connected-body">
+              <p class="connected-title">Connected as <span id="setupWho"></span></p>
+              <p id="setupNext" class="help"></p>
+              <div class="token-line">
+                <span class="token-label">Token</span>
+                <code id="tokenValue" class="token-value"></code>
+                <button id="revealSaved" class="icon-btn" type="button" aria-pressed="false" aria-label="Show token" title="Show token"></button>
+                <button id="copyToken" class="icon-btn" type="button" aria-label="Copy token" title="Copy token"></button>
+              </div>
+            </div>
+            <button id="changeToken" class="btn btn--small" type="button">Change token</button>
+          </div>
+        </div>
+      </section>
+
+      <section id="teamGroup" class="group after-setup" aria-labelledby="team-title">
+        <div class="group-head">
+          <h2 id="team-title">Setup code</h2>
+          <p>Set Pointer up the way your team does by pasting a colleague's code, or copy yours to share. Everyone connects ClickUp with their own token: a code never holds it.</p>
+        </div>
+        <div class="group-body">
+          <div class="field">
+            <label for="setupCodeIn">Paste a setup code</label>
+            <textarea id="setupCodeIn" class="textarea" rows="2" spellcheck="false" autocomplete="off" placeholder="PTR1.…"></textarea>
+            <p id="setupCodeStatus" class="status" role="status"></p>
+          </div>
+          <div id="setupCodePreview" class="sample" hidden></div>
+          <div id="setupCodeActions" class="actions" hidden>
+            <button id="setupCodeApply" class="btn btn--primary" type="button">Use these settings</button>
+            <button id="setupCodeCancel" class="btn" type="button">Cancel</button>
+          </div>
+          <div class="field">
+            <span class="label">Share your setup</span>
+            <label class="switch">
+              <input id="setupCodeWithKey" type="checkbox" role="switch" />
+              <span class="switch-label">Include my Z.ai key</span>
+              <span class="switch-help">Anyone with the code can then use the key, so share the code the way you'd share the key itself.</span>
+            </label>
+            <div class="actions">
+              <button id="setupCodeCopy" class="btn" type="button">Copy setup code</button>
+              <span id="setupCodeCopied" class="status" role="status"></span>
+            </div>
+            <textarea id="setupCodeOut" class="textarea" rows="2" readonly hidden aria-label="Your setup code"></textarea>
+          </div>
+        </div>
+      </section>
+
+      <section id="spaceGroup" class="group after-setup" aria-labelledby="space-title">
+        <div class="group-head">
+          <h2 id="space-title">Projects</h2>
+          <p>Pointer's projects are the folders and lists of one ClickUp space. In a folder with a list called Development, tasks go to that list.</p>
+        </div>
+        <div class="group-body">
+          <div class="field">
+            <label for="spaceId">ClickUp space</label>
+            <select id="spaceId" class="select select--list"></select>
+            <p id="spaceStatus" class="status" role="status"></p>
+          </div>
+        </div>
+      </section>
+
+      <section class="group after-setup" aria-labelledby="assignee-title">
+        <div class="group-head">
+          <h2 id="assignee-title">Default assignee</h2>
+          <p>New tasks are assigned to this person. You can still pick someone else in each note.</p>
+        </div>
+        <div class="group-body">
+          <div class="field">
+            <label for="defaultAssignee">Assign new tasks to</label>
+            <select id="defaultAssignee" class="select"></select>
+            <p id="assigneeHelp" class="help" role="status"></p>
+          </div>
+          <label class="switch">
+            <input id="codingAgent" type="checkbox" role="switch" />
+            <span class="switch-label">This is a coding agent</span>
+            <span class="switch-help">Turn on if the default assignee is an AI agent that picks up its tasks and changes the code. Send to ClickUp in Gmail and HubSpot then gives it only clear, small changes in a named place, and gives you the rest: design decisions, unclear requests, content that lives in a CMS, and anything about booking, prices or legal text.</span>
+          </label>
+        </div>
+      </section>
+
+      <section class="group after-setup" aria-labelledby="sites-title">
+        <div class="group-head">
+          <h2 id="sites-title">Where Pointer shows up</h2>
+          <p>Pointer starts by itself on localhost and on your sites, which count as staging. Anywhere else, click Pointer's toolbar button or press the shortcut.</p>
+        </div>
+        <div class="group-body">
+          <div class="field">
+            <label for="sites">Your sites</label>
+            <textarea id="sites" class="textarea" rows="4" spellcheck="false" placeholder="staging.example.com&#10;*-preview.example.com"></textarea>
+            <p class="help">One per line. * stands for any part of the address, so *-staging.vercel.app covers every project's staging site. Takes effect on the next page you open.</p>
+          </div>
+          <div class="field">
+            <label for="footerCredit">Your agency's domains</label>
+            <input id="footerCredit" type="text" spellcheck="false" placeholder="agency.com, agency.co.uk" />
+            <p class="help">If your clients' live sites credit you in their footer (a link to your site, "Powered by …"), Pointer starts on those too, as live sites. Emails from these domains count as your team's in Send to ClickUp. Leave empty to skip.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="group after-setup" aria-labelledby="rewrite-title">
+        <div class="group-head">
+          <h2 id="rewrite-title">Rewrite with AI (optional)</h2>
+          <p>With a Z.ai API key, Z.ai's GLM model turns each note into a short title and a few clear bullets in English, and splits client emails into tasks. Without one, everything else works the same.</p>
+        </div>
+        <div class="group-body">
+          <p id="zaiState" class="callout"></p>
+          <div class="field">
+            <label for="zaiKey">Z.ai API key</label>
+            <input id="zaiKey" type="password" autocomplete="off" spellcheck="false" placeholder="xxxxxxxx.xxxxxxxx" />
+            <p class="help">Create one in your account at <a href="https://z.ai" target="_blank" rel="noopener">z.ai</a>. It stays in this browser and is sent only to Z.ai. Model <code id="zaiModel"></code>.</p>
+          </div>
+          <div class="actions">
+            <button id="testZai" class="btn" type="button">Test rewrite</button>
+            <span id="zaiStatus" class="status" role="status"></span>
+          </div>
+          <div id="zaiSample" class="sample" hidden></div>
+        </div>
+      </section>
+
+      <section class="group after-setup" aria-labelledby="behaviour-title">
+        <div class="group-head">
+          <h2 id="behaviour-title">Behaviour</h2>
+          <p>How Pointer works on the page.</p>
+        </div>
+        <div class="group-body">
+          <label class="switch">
+            <input id="reviewBeforeSend" type="checkbox" role="switch" />
+            <span class="switch-label">Review the rewrite before creating the task</span>
+            <span class="switch-help">Shows the task's name and its whole description, rewritten and ready, for a last edit before it goes to ClickUp. Page tasks too, when you press Publish task, and the tasks Send to ClickUp makes from an email in Gmail or a HubSpot ticket.</span>
+          </label>
+          <label class="switch">
+            <input id="pageTask" type="checkbox" role="switch" />
+            <span class="switch-label">Enable Page Specific Task</span>
+            <span class="switch-help">Collect several notes on a page, each keeping its pin, then press Publish task on the page to send them all as one task, titled after the page.</span>
+          </label>
+          <label class="switch">
+            <input id="commentMode" type="checkbox" role="switch" />
+            <span class="switch-label">Comment Mode</span>
+            <span class="switch-help">When there's already an open Pointer task for it (the same block on that page, or with page tasks, the page's task), a new note goes on that task as a comment instead of making a new one. Each note says which task it's going to, and can still make a new one.</span>
+          </label>
+          <label class="switch">
+            <input id="seoCheck" type="checkbox" role="switch" />
+            <span class="switch-label">SEO checker</span>
+            <span class="switch-help">An SEO button beside Pointer checks the page the way Google reads it: whether it can be found, its title and description in a Google preview, languages, headings, image alt texts and share previews, judged by staging or live site. Ticked findings go to ClickUp as one task.</span>
+          </label>
+          <div class="shortcut">
+            <span class="label">Point mode shortcut</span>
+            <span id="shortcutKeys" class="keys"></span>
+            <p id="shortcutWarning" class="status is-bad" role="status"></p>
+            <div class="actions">
+              <button id="changeShortcut" class="btn btn--small" type="button">Change shortcut</button>
+              <span id="shortcutHelp" class="help">Opens your browser's shortcut settings. Look for bid Pointer.</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="pageTasksGroup" class="group after-setup" aria-labelledby="pagetasks-title" hidden>
+        <div class="group-head">
+          <h2 id="pagetasks-title">Waiting to be published</h2>
+          <p>Pages with page-task notes that haven't gone to ClickUp yet. Open a page and press Publish task, or discard its notes.</p>
+        </div>
+        <div id="pageTasks" class="group-body"></div>
+      </section>
+
+      <section class="group after-setup" aria-labelledby="projects-title">
+        <div class="group-head">
+          <h2 id="projects-title">Remembered projects</h2>
+          <p>Notes start with the project that matches the site's URL. After your first task on a site, they start with the project you used there. Forget a site to go back to the URL match.</p>
+        </div>
+        <div id="hostProjects" class="group-body"></div>
+      </section>
+
+      <section class="group after-setup" aria-labelledby="recent-title">
+        <div class="group-head">
+          <h2 id="recent-title">Recent tasks</h2>
+          <p>Your last 20 tasks, and whether each screenshot made it.</p>
+        </div>
+        <div id="recent" class="group-body"></div>
+      </section>
+
+
+      <section id="consentGroup" class="group" aria-labelledby="consent-title">
+        <div class="group-head">
+          <h2 id="consent-title">What Pointer sends, and where</h2>
+          <p>Pointer has no server of its own. It sends things only when you press send, and only to your ClickUp workspace and, if you add a key, to Z.ai.</p>
+        </div>
+        <div class="group-body">
+          <details id="consentList" class="disclosure" open>
+            <summary class="btn btn--small">Hide the details</summary>
+            <ul class="consent-list">
+              <li><b>To ClickUp, when you send a note:</b> what you wrote, a screenshot of the page with the spot marked (or your screen recording instead), the page's address and title, the text of what you clicked and where it sits on the page, and your browser and window size.</li>
+              <li><b>To ClickUp, when you press Send to ClickUp in Gmail or HubSpot:</b> the emails you have open, with their senders, dates, images and attached files, and for a HubSpot ticket its name, owner and contact.</li>
+              <li><b>To ClickUp, when you send an SEO check:</b> the page's address and the findings you ticked, with the texts and tags they're about.</li>
+              <li><b>To Z.ai, only if you add a Z.ai key:</b> a note's text with the page's address and title and what you clicked, to rewrite it; and the emails' text, to split them into tasks. Never screenshots, recordings or files.</li>
+              <li><b>Kept in this browser:</b> your ClickUp token, your Z.ai key and your settings. They're sent only to ClickUp and Z.ai, to sign in. Nothing goes to bid or anyone else, and Pointer collects no analytics.</li>
+            </ul>
+            <p class="consent-privacy"><a href="privacy.html" target="_blank" rel="noopener">Privacy policy</a></p>
+          </details>
+          <div class="actions">
+            <button id="consentAgree" class="btn btn--primary" type="button" hidden>I agree</button>
+          </div>
+          <p id="consentDone" class="help" hidden>You agreed on <span id="consentWhen"></span>. <button id="consentWithdraw" class="btn btn--small" type="button">Withdraw</button></p>
+          <p id="consentFirefox" class="help" hidden>Firefox asked for your OK on this when you installed Pointer.</p>
+        </div>
+      </section>
+    </main>
+
+    <div id="saved" class="saved" role="status">Saved</div>
+    <script src="options.js"></script>
+  </body>
+</html>

@@ -1,0 +1,93 @@
+/*
+ * Send to ClickUp, in the app's own row of buttons: beside Gmail's Reply and Forward, or left of a
+ * HubSpot ticket's Actions. Its size, shape and type are copied from those buttons when it's
+ * placed (matchNeighbour in mail/pointer.ts), so these are only the starting values; the gold is bid's.
+ */
+
+:host {
+  all: initial;
+  display: inline-flex;
+  vertical-align: middle;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+.send {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  box-sizing: border-box;
+  height: 36px;
+  margin: 0;
+  padding: 0 16px 0 12px;
+  border: 1px solid transparent;
+  border-radius: 18px;
+  background: linear-gradient(to right, #b27050 0%, #ffa173 50%, #ffba90 100%);
+  background-size: 200% 100%;
+  color: #1d1c2c;
+  font: 500 14px/20px 'Google Sans', Roboto, Arial, sans-serif;
+  letter-spacing: 0.25px;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background-position 400ms ease,
+    box-shadow 150ms ease;
+}
+
+.send:hover:not(:disabled) {
+  background-position: 100% 0;
+  box-shadow:
+    0 1px 2px rgba(60, 64, 67, 0.3),
+    0 1px 3px 1px rgba(60, 64, 67, 0.15);
+}
+
+.send:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(255, 161, 115, 0.6);
+}
+
+.send:disabled {
+  cursor: progress;
+}
+
+.icon {
+  display: inline-flex;
+  flex: none;
+  width: 20px;
+  height: 20px;
+}
+
+.icon svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* Already in ClickUp: still gold-edged, quieter, and a click offers to send it again. */
+.send.is-sent {
+  border-color: #ffa173;
+  background: #fff3ec;
+  color: #8f5537;
+}
+
+.spin {
+  animation: spin 900ms linear infinite;
+}
+
+@keyframes spin {
+  to {
+    rotate: 360deg;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .send {
+    transition: none;
+  }
+
+  .spin {
+    animation-duration: 2.4s;
+  }
+}

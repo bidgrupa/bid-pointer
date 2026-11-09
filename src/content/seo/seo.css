@@ -1,0 +1,21 @@
+/*
+ * The SEO check's styles, bundled into the shadow root's sheet by ui.css. They come before ui.css's
+ * own rules, so anything that changes one of its classes uses a compound selector (.note.seo).
+ */
+@import './dock.css';
+@import './panel.css';
+@import './findings.css';
+@import './unfolded.css';
+@import './summary.css';
+@import './previews.css';
+
+:host {
+  /* how much a finding matters: red to fix, orange to improve, grey to know, green passed */
+  --seo-fix: var(--danger);
+  --seo-fix-wash: var(--danger-wash);
+  --seo-improve: var(--orange);
+  --seo-improve-ink: var(--orange-ink);
+  --seo-pass: #2b7a4b; /* 5.2:1 on paper */
+  --seo-pass-wash: #e8f3ec;
+  --seo-mono: ui-monospace, 'Cascadia Mono', Consolas, Menlo, monospace;
+}

@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Website changes - smoke@bid.hr - BID Mail</title>
+    <!--
+      A stand-in for a Gmail conversation, for the smoke tests (scripts/gmail-check.mjs). It keeps
+      only what Pointer reads, with Gmail's own class names and attributes (see src/gmail/read.ts):
+      the Reply / Forward row (.amn), messages ([data-message-id]), bodies (.ii.gt .a3s), the sender
+      (span.gD[email]), the date (.g3[title]) and attachment cards (span.aZo).
+    -->
+    <style>
+      body {
+        margin: 0;
+        background: #f6f8fc;
+        color: #1f1f1f;
+        font: 14px/20px Arial, sans-serif;
+      }
+      [role='main'] {
+        max-width: 980px;
+        margin: 16px auto;
+        padding: 20px 0 8px;
+        border-radius: 16px;
+        background: #fff;
+      }
+      h2.hP {
+        margin: 0 0 16px 72px;
+        font: 400 22px/28px Arial, sans-serif;
+      }
+      .kv {
+        display: flex;
+        gap: 12px;
+        padding: 10px 24px 10px 72px;
+        border-bottom: 1px solid #eee;
+        color: #5e5e5e;
+      }
+      .h7 {
+        padding: 12px 24px 0 72px;
+      }
+      h3.iw {
+        display: inline;
+        margin: 0;
+        font-size: 14px;
+      }
+      .gD {
+        font-weight: 700;
+      }
+      .g3 {
+        float: right;
+        color: #5e5e5e;
+        font-size: 12px;
+      }
+      .ii.gt {
+        margin-top: 16px;
+      }
+      .aQH {
+        display: flex;
+        gap: 12px;
+        margin: 16px 0;
+      }
+      .aZo a {
+        display: block;
+        width: 180px;
+        padding: 6px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        color: inherit;
+        text-decoration: none;
+      }
+      .aZo img {
+        display: block;
+        width: 168px;
+        height: 96px;
+        object-fit: cover;
+        background: #eee;
+      }
+      .aV3 {
+        display: block;
+        margin-top: 4px;
+        font-size: 12px;
+      }
+      /* Gmail's Material 3 row under a conversation: outlined pills, then the emoji button */
+      .amn {
+        display: flex;
+        align-items: center;
+        padding: 16px 24px 24px 72px;
+      }
+      .ams,
+      .emoji {
+        display: inline-flex;
+        align-items: center;
+        box-sizing: border-box;
+        height: 36px;
+        margin-right: 12px;
+        border: 1px solid #747775;
+        color: #444746;
+        cursor: pointer;
+      }
+      .ams {
+        gap: 8px;
+        padding: 0 16px 0 12px;
+        border-radius: 18px;
+        font: 500 14px/20px Arial, sans-serif;
+        letter-spacing: 0.25px;
+      }
+      .ams svg {
+        width: 20px;
+        height: 20px;
+      }
+      .emoji {
+        justify-content: center;
+        width: 36px;
+        border-radius: 50%;
+      }
+    </style>
+  </head>
+  <body>
+    <div role="main">
+      <h2 class="hP" data-thread-perm-id="thread-f:1879032673075451109" data-legacy-thread-id="1a13aa42b8000001">Website changes</h2>
+      <div role="list">
+        <!-- an earlier message, collapsed: Gmail shows only a line, no body -->
+        <div class="kv" role="listitem">
+          <div class="adn" data-message-id="#msg-f:1879032673075451109" data-legacy-message-id="1a13aa42b803d4e5">
+            <span class="gD" email="ana@hotel-example.hr" name="Ana Horvat">Ana Horvat</span>
+            <span class="y2">About the new brochure, the PDF has the old logo…</span>
+          </div>
+        </div>
+        <!-- the latest message, expanded -->
+        <div class="h7" role="listitem" id="latest">
+          <div class="adn ads" data-message-id="#msg-f:1879189461402262316" data-legacy-message-id="1a1438dbd88a1b2c">
+            <h3 class="iw"><span class="gD" email="ana@hotel-example.hr" name="Ana Horvat">Ana Horvat</span></h3>
+            <span class="g3" title="Fri, Oct 16, 2026, 9:12 AM">9:12 AM</span>
+            <div class="ii gt">
+              <div class="a3s aiL">
+                <div dir="ltr">
+                  <p>Hi team, a few things:</p>
+                  <ol>
+                    <li>
+                      On the Rooms page the Deluxe Suite still says 45 m², it should be 52 m². Also "balcony" is misspelled in the Superior Room text.
+                      See the page: <a href="https://www.hotel-example.hr/en/rooms">Rooms</a><br />
+                      <img
+                        src="https://mail.google.com/mail/u/0?ui=2&amp;ik=abc123&amp;attid=0.1&amp;permmsgid=msg-f:1879189461402262316&amp;th=1a1438dbd88a1b2c&amp;view=fimg&amp;fur=ip&amp;sz=s0-l75-ft&amp;attbid=ANGjdJ8&amp;disp=emb&amp;realattid=ii_m1&amp;zw"
+                        alt="rooms-screenshot.png"
+                        width="320"
+                        height="180"
+                      />
+                    </li>
+                    <li>The Book Now button is hard to see on mobile, on the homepage and on Offers. Can it be bigger?</li>
+                    <li>Please replace the Wellness hero photo with the attached one.</li>
+                    <li>When will the new spa page be live?</li>
+                    <li>Yesterday the booking engine showed €0 for one night. Guests noticed!</li>
+                  </ol>
+                  <p>
+                    Best regards,<br />Ana Horvat<br />Hotel Example
+                    <img src="https://ci3.googleusercontent.com/meips/ADKq_icon=s0-d-e1-ft#https://www.hotel-example.hr/icon.png" width="24" height="24" alt="" />
+                  </p>
+                  <img src="https://mail.google.com/mail/u/0?ui=2&amp;ik=abc123&amp;view=pixel" width="1" height="1" alt="" />
+                </div>
+                <div class="ajR" role="button" aria-label="Show trimmed content"><img class="ajT" src="https://ssl.gstatic.com/ui/v1/icons/mail/images/cleardot.gif" alt="" /></div>
+                <div class="gmail_quote" style="display: none">
+                  On Wed, Oct 14, 2026 at 3:40 PM Ana Horvat wrote:
+                  <blockquote>Old quoted text: please also change the spa prices.</blockquote>
+                </div>
+              </div>
+            </div>
+            <div class="hq gt">
+              <div class="aQH">
+                <span
+                  class="aZo"
+                  download_url="image/jpeg:wellness-hero.jpg:https://mail.google.com/mail/u/0?ui=2&amp;ik=abc123&amp;attid=0.2&amp;permmsgid=msg-f:1879189461402262316&amp;th=1a1438dbd88a1b2c&amp;view=att&amp;disp=safe&amp;realattid=f_m2"
+                  ><a
+                    class="aQy"
+                    href="https://mail.google.com/mail/u/0?ui=2&amp;ik=abc123&amp;attid=0.2&amp;permmsgid=msg-f:1879189461402262316&amp;th=1a1438dbd88a1b2c&amp;view=att&amp;disp=inline&amp;realattid=f_m2"
+                    target="_blank"
+                    ><img
+                      class="aQG"
+                      src="https://mail.google.com/mail/u/0?ui=2&amp;ik=abc123&amp;attid=0.2&amp;permmsgid=msg-f:1879189461402262316&amp;th=1a1438dbd88a1b2c&amp;view=fimg&amp;sz=w180-h120&amp;realattid=f_m2"
+                      alt="" /><span class="aV3">wellness-hero.jpg</span></a
+                  ></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="amn">
+        <span class="ams bkH" role="link" tabindex="0"
+          ><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M8 5 3 10l5 5M3 10h9a5 5 0 0 1 5 5" fill="none" stroke="currentColor" stroke-width="1.6" /></svg>Reply</span
+        ><span class="ams bkG" role="link" tabindex="0"
+          ><svg viewBox="0 0 20 20" aria-hidden="true"><path d="m12 5 5 5-5 5m5-5H8a5 5 0 0 0-5 5" fill="none" stroke="currentColor" stroke-width="1.6" /></svg>Forward</span
+        ><div class="emoji" role="button" aria-label="Add reaction" tabindex="0">☺</div>
+      </div>
+    </div>
+    <script>
+      // what the tests check Gmail never sees: clicks on its row, keys typed into Pointer
+      window.__rowClicks = 0;
+      window.__gmailKeys = [];
+      document.querySelector('.amn').addEventListener('click', () => window.__rowClicks++);
+      document.addEventListener('keydown', (e) => window.__gmailKeys.push(e.key));
+      // Gmail collapses a message to one line: its body leaves the screen
+      window.collapseLatest = () => {
+        const m = document.getElementById('latest');
+        m.classList.replace('h7', 'kv');
+        m.querySelector('.ii.gt').style.display = 'none';
+        m.querySelector('.hq').style.display = 'none';
+      };
+      window.expandLatest = () => {
+        const m = document.getElementById('latest');
+        m.classList.replace('kv', 'h7');
+        m.querySelector('.ii.gt').style.display = '';
+        m.querySelector('.hq').style.display = '';
+      };
+    </script>
+  </body>
+</html>

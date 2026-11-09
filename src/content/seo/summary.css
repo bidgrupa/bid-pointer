@@ -1,0 +1,124 @@
+/* ---------- SEO summary: how many of each, what's still loading, and Check links ---------- */
+
+/* How many of each, then what's still loading, or that all is well. */
+.seo-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 14px 0 12px;
+}
+
+.seo-summary:empty {
+  display: none;
+}
+
+.seo-count {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  background: var(--line);
+  color: var(--ink-2);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.seo-count--fix {
+  background: var(--seo-fix-wash);
+  color: var(--seo-fix);
+}
+
+.seo-count--improve {
+  background: var(--orange-wash);
+  color: var(--seo-improve-ink);
+}
+
+.seo-count--pass {
+  background: var(--seo-pass-wash);
+  color: var(--seo-pass);
+}
+
+.seo-waiting,
+.seo-clear {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  font-size: 13px;
+}
+
+.seo-waiting {
+  color: var(--ink-2);
+}
+
+.seo-clear {
+  font-weight: 600;
+}
+
+.seo-spinner {
+  flex: none;
+  width: 14px;
+  height: 14px;
+  border: 2px solid var(--line);
+  border-top-color: var(--orange-dark);
+  border-radius: 50%;
+  animation: seo-spin 800ms linear infinite;
+}
+
+@keyframes seo-spin {
+  to {
+    transform: rotate(1turn);
+  }
+}
+
+/* Check links: asked for, since it requests every link. */
+.seo-extra {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 12px;
+  margin-top: 14px;
+  padding: 10px 12px 12px;
+  border: 1px dashed var(--ink-3);
+  border-radius: var(--radius-md);
+}
+
+.seo-extra-text {
+  flex: 1 1 220px;
+  color: var(--ink-2);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.seo-extra-text b {
+  color: var(--ink);
+}
+
+.seo-bar {
+  position: absolute;
+  right: 12px;
+  bottom: 5px;
+  left: 12px;
+  height: 3px;
+  overflow: hidden;
+  border-radius: 2px;
+  background: var(--line);
+}
+
+.seo-bar-fill {
+  display: block;
+  width: 0;
+  height: 100%;
+  background: var(--gold);
+  transition: width 200ms ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .seo-spinner {
+    animation: none;
+  }
+}

@@ -1,0 +1,22 @@
+SOURCE CODE AND BUILD
+
+The uploaded source archive is the repository at this version's tag. The add-on is TypeScript, bundled by esbuild into one script per entry point (background.js, content.js, detector.js, gmail.js, hubspot.js, options.js). The JavaScript is not minified; the page UI's CSS is minified and inlined into content.js as a string, for the UI's shadow root. Other generated files: the PNG icons, drawn by scripts/make-icons.mjs, and privacy.html, rendered from PRIVACY.md by scripts/privacy-page.mjs. The build is deterministic: the build id in every script is the version plus a hash of the sources (scripts/source-hash.mjs), never a time or a path.
+
+To rebuild (Ubuntu 24.04, Node 22 or later; any CPU):
+1. From the source root: corepack enable (or: npm install -g pnpm@10.34.5, the version package.json pins)
+2. pnpm install --frozen-lockfile
+3. pnpm build
+dist-firefox/ is then identical to the submitted package. README.md, "Building from source", has the details.
+
+No remote code and no secrets: the person pastes their own ClickUp API token, and optionally a Z.ai API key, on the options page. Requests go only to api.clickup.com and api.z.ai, and, for the SEO check, to the site being checked (its robots.txt, sitemap and links). UI templates are set with innerHTML; every value put into them goes through esc() (src/content/view.ts, src/options/dom.ts), which escapes & < > " '. No third-party code runs in the add-on.
+
+TESTING
+
+Pointer works with a ClickUp workspace, so a test account made for review is below (or in this version's notes).
+1. After installing, Pointer's settings page opens. Firefox already asked for the data-collection OK at install, so the page goes straight to connecting ClickUp.
+2. Paste the test account's API token into step 3. Pointer connects and picks the workspace's only space, "Review", by itself.
+3. Open any website, for example https://example.com, and click the bid Pointer toolbar button. A "Pointer" button appears in the bottom-right corner.
+4. Click the page's heading, type a note such as "This heading should be bigger", choose the project "Website", and press Enter. A task with a screenshot appears in the test workspace, in the Review space.
+5. Optional: the SEO button next to Pointer checks the page; tick a finding and press Send.
+
+Z.ai rewriting is optional and off without a key. Pointer works fully without it.

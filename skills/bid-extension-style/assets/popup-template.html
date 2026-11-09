@@ -1,0 +1,59 @@
+<!doctype html>
+<!--
+  Skeleton of an extension popup in the bid Pointer look: a short masthead, one gold action,
+  a list, and a creme foot with the way to the settings. Uses page.css (body.popup).
+  Keep the extension's own ids and element types where its script depends on them.
+-->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="page.css" />
+  </head>
+  <body class="popup">
+    <header class="masthead">
+      <div class="wrap masthead-inner">
+        <!-- the extension's own mark: thin line icon, 1.6 stroke, round caps -->
+        <svg class="mark" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="10" cy="10" r="6" />
+        </svg>
+        <div>
+          <h1>Extension name</h1>
+          <p>What it does, in one short line.</p>
+        </div>
+      </div>
+    </header>
+
+    <main class="wrap">
+      <section class="group" aria-label="Save">
+        <div class="group-body">
+          <!-- the popup's one gold button -->
+          <button class="btn btn--primary popup-action" type="button">Save this page</button>
+          <p class="status" role="status"></p>
+        </div>
+      </section>
+
+      <section class="group" aria-labelledby="list-title">
+        <div class="group-head"><h2 id="list-title">Saved</h2></div>
+        <div class="group-body">
+          <input class="input--search" type="search" placeholder="Search" aria-label="Search" />
+          <ul class="rows">
+            <li>
+              <div class="row-main">
+                <a class="row-title" href="#" target="_blank" rel="noopener">How we ship staging builds</a>
+                <div class="row-meta"><span>2 days ago</span></div>
+              </div>
+              <button class="icon-btn" type="button" aria-label="Remove" title="Remove">
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8" /></svg>
+              </button>
+            </li>
+          </ul>
+          <!-- With nothing saved: <p class="empty">Nothing saved yet. Save this page to start.</p> -->
+        </div>
+      </section>
+    </main>
+
+    <footer class="popup-foot">
+      <a class="btn btn--small" href="options.html" target="_blank">Open settings</a>
+    </footer>
+  </body>
+</html>

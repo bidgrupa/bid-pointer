@@ -1,0 +1,79 @@
+{
+  "manifest_version": 3,
+  "name": "bid Pointer",
+  "version": "1.0.0",
+  "description": "Click anything on a website, say what's wrong, and get a ClickUp task with a marked-up screenshot.",
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAsWNtYr/qwNsnhwFUUCdqLQeYNgMXLjkfiQQ9xxlZ8gFugzJduB1OM/j1YvjLtxMs6dEGQGE8MQ13XtIQDrtxQW233kd4TKKNNFO9W1yxyjNS8Dpe2sPpxP45HI1FHDg4UyjMJ6EBqgW679NdX2plCbIRG4xmcg2FT3c4+iNxiORHL3ktmH7zTnrUN6zVHoiR6+LDznovfWCSVPyZL2dgo6NXTRN60GFoA67+2+a1nc++PBfe20DBDtJHtNjKRPm9jMwLM8OXnTdKNbE0AD6vVaV6HMHD33QSCtcby7gPiXd6YRGbckmOITsQzOoP94ssP9ku/eQFoMuAF97YLLHlUwIDAQAB",
+  "icons": {
+    "16": "icons/16.png",
+    "48": "icons/48.png",
+    "128": "icons/128.png"
+  },
+  "action": {
+    "default_title": "bid Pointer — toggle point mode (Alt+Shift+P)"
+  },
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": true
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "detector.js"
+      ],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": [
+        "https://mail.google.com/*"
+      ],
+      "js": [
+        "gmail.js"
+      ],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": [
+        "https://app.hubspot.com/*",
+        "https://app-eu1.hubspot.com/*"
+      ],
+      "js": [
+        "hubspot.js"
+      ],
+      "run_at": "document_idle"
+    }
+  ],
+  "permissions": [
+    "storage",
+    "unlimitedStorage",
+    "activeTab",
+    "scripting"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "fonts/*.otf"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
+    }
+  ],
+  "commands": {
+    "toggle-point-mode": {
+      "suggested_key": {
+        "default": "Alt+Shift+P"
+      },
+      "description": "Toggle Pointer point mode"
+    }
+  }
+}

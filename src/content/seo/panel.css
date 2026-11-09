@@ -1,0 +1,165 @@
+/* ---------- SEO panel: beside the dock (above it, or below in a top corner), like the page task's review ---------- */
+
+.note.seo {
+  right: 20px;
+  bottom: 76px;
+  width: 460px;
+  max-height: calc(100% - 96px);
+  transform-origin: calc(100% - 60px) calc(100% + 30px);
+}
+
+:host([data-corner^='top']) .note.seo {
+  top: 76px;
+  bottom: auto;
+  transform-origin: calc(100% - 60px) -30px;
+}
+
+:host([data-corner$='left']) .note.seo {
+  right: auto;
+  left: 20px;
+  transform-origin: 60px calc(100% + 30px);
+}
+
+:host([data-corner='top-left']) .note.seo {
+  transform-origin: 60px -30px;
+}
+
+@media (max-width: 520px) {
+  .note.seo,
+  :host([data-corner$='left']) .note.seo {
+    right: 8px;
+    left: 8px;
+    width: auto;
+  }
+}
+
+.note-head.seo-head {
+  gap: 4px;
+}
+
+/* The page it checked, and when; lined up with the title after the pin. */
+.seo-where {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding-left: 23px;
+  color: var(--ink-2);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.seo-path {
+  min-width: 0;
+  overflow: hidden;
+  font-family: var(--seo-mono);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.seo-when {
+  flex: none;
+}
+
+/* Check again: round like the ×, beside it. */
+.seo-icon-btn {
+  flex: none;
+  width: 28px;
+  height: 28px;
+  margin: -4px -4px 0 0;
+  padding: 6px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--ink-2);
+  cursor: pointer;
+  transition:
+    background-color 150ms ease,
+    color 150ms ease;
+}
+
+.seo-icon-btn:hover {
+  background: var(--line);
+  color: var(--ink);
+}
+
+.seo-icon-btn:focus-visible {
+  outline: none;
+  box-shadow: var(--ring);
+}
+
+.seo-icon-btn svg {
+  width: 100%;
+  height: 100%;
+}
+
+.seo .note-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+/* Where the task goes and who gets it, then the send button; the review's buttons in its place. */
+.seo-foot {
+  display: grid;
+  gap: 10px;
+  padding: 12px 18px 14px;
+  border-top: 1px solid var(--line);
+  background: var(--creme);
+}
+
+.seo-send-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 12px;
+}
+
+.seo-send-row .hint {
+  color: var(--ink-2);
+  font-size: 12px;
+}
+
+.seo-send-actions {
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
+}
+
+/* Just sent: which task the ticked findings went into. */
+.seo-sent {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  padding: 8px 12px;
+  border-radius: var(--radius-md);
+  background: var(--orange-wash);
+  color: var(--orange-ink);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.seo-sent > svg {
+  flex: none;
+  width: 16px;
+  height: 16px;
+}
+
+.seo-sent a,
+.seo-ext a {
+  border-radius: var(--radius-sm);
+  color: var(--ink);
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+.seo-sent a:focus-visible,
+.seo-ext a:focus-visible {
+  outline: none;
+  box-shadow: var(--ring);
+}

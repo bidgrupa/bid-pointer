@@ -1,0 +1,13 @@
+node_modules/
+dist/
+icons/
+tests/out/
+secrets.json
+*.log
+*.zip
+dist-firefox/
+web-ext-artifacts/
+*.xpi
+*.skill
+dist-safari/
+release/

@@ -1,0 +1,199 @@
+name: Release
+
+# Builds, tests and packages bid Pointer, and publishes it, following webpify's release workflow.
+#   - Push a tag like v1.0.0 (it must match manifest.json) to publish a release.
+#   - "Run workflow" on the Actions tab builds the same packages as downloadable artifacts without
+#     publishing or submitting anything, which is handy for testing.
+# addons.mozilla.org: with the AMO_JWT_ISSUER and AMO_JWT_SECRET repository secrets set, tagged
+# releases are also submitted there as listed versions.
+# Chrome Web Store: with the CWS_SERVICE_ACCOUNT secret and the CWS_PUBLISHER_ID and CWS_ITEM_ID
+# variables set, tagged releases are also submitted there. Both: docs/public-release.md.
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build, test and package
+    runs-on: ubuntu-24.04
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Check the version
+        id: version
+        run: |
+          version=$(jq -r .version manifest.json)
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          if [[ "$(jq -r .version package.json)" != "$version" ]]; then
+            echo "::error::package.json and manifest.json have different versions"
+            exit 1
+          fi
+          if [[ "$GITHUB_REF_TYPE" == "tag" && "$GITHUB_REF_NAME" != "v$version" ]]; then
+            echo "::error::Tag $GITHUB_REF_NAME doesn't match version $version in manifest.json"
+            exit 1
+          fi
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+
+      # pnpm at the version package.json pins ("packageManager")
+      - name: Install dependencies
+        run: |
+          corepack enable
+          pnpm install --frozen-lockfile
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Test
+        run: pnpm test
+
+      - name: Build and package
+        run: pnpm package
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: packages
+          path: release/
+          if-no-files-found: error
+
+      # web-ext sign takes the folder
+      - uses: actions/upload-artifact@v7
+        with:
+          name: dist-firefox
+          path: dist-firefox/
+          if-no-files-found: error
+
+  amo:
+    name: Submit to addons.mozilla.org
+    # Each version number is accepted once, so only tagged releases are submitted. The first
+    # version goes in by hand (docs/public-release.md); this adds the later ones.
+    if: github.ref_type == 'tag'
+    needs: build
+    runs-on: ubuntu-24.04
+    env:
+      VERSION: ${{ needs.build.outputs.version }}
+      AMO_JWT_ISSUER: ${{ secrets.AMO_JWT_ISSUER }}
+      AMO_JWT_SECRET: ${{ secrets.AMO_JWT_SECRET }}
+      # the review test account (ClickUp login and API token), kept out of the repository
+      AMO_TEST_ACCOUNT: ${{ secrets.AMO_TEST_ACCOUNT }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+
+      - uses: actions/download-artifact@v8
+        with:
+          name: packages
+          path: release
+
+      - uses: actions/download-artifact@v8
+        with:
+          name: dist-firefox
+          path: dist-firefox
+
+      - name: Submit
+        if: env.AMO_JWT_ISSUER != '' && env.AMO_JWT_SECRET != ''
+        run: |
+          if grep -q TODO PRIVACY.md; then
+            echo "::error::PRIVACY.md still has TODOs; fill them in before submitting"
+            exit 1
+          fi
+          # Release notes: the release commit's message body, unwrapped, without trailers.
+          git log -1 --format=%b | sed '/^Co-Authored-By:/d' > release-notes.txt
+          cp store/firefox/approval-notes.txt approval-notes.txt
+          if [[ -n "$AMO_TEST_ACCOUNT" ]]; then
+            { echo; echo "TEST ACCOUNT"; echo; echo "$AMO_TEST_ACCOUNT"; } >> approval-notes.txt
+          fi
+          jq -n --rawfile notes release-notes.txt --rawfile approval approval-notes.txt '
+            ($notes | sub("\\s+$"; "") | split("\n\n") | map(gsub("\n(?!- )\\s*"; " ")) | join("\n\n")) as $text
+            | { version: ({ approval_notes: $approval }
+                + (if $text == "" then {} else { release_notes: { "en-US": $text } } end)) }
+          ' > amo-metadata.json
+          npx --yes web-ext@10 sign \
+            --channel=listed \
+            --source-dir dist-firefox \
+            --upload-source-code "release/bid-pointer-source-$VERSION.zip" \
+            --amo-metadata amo-metadata.json \
+            --approval-timeout=0 \
+            --api-key "$AMO_JWT_ISSUER" \
+            --api-secret "$AMO_JWT_SECRET"
+
+  release:
+    name: Publish the GitHub release
+    if: github.ref_type == 'tag'
+    needs: build
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          name: packages
+          path: release
+
+      - name: Create or update the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ needs.build.outputs.version }}
+        run: |
+          guide="https://github.com/$GITHUB_REPOSITORY/blob/$GITHUB_REF_NAME/INSTALL.md"
+          cat > notes.md <<EOF
+          bid Pointer $VERSION. **Installation guide: [INSTALL.md]($guide)**
+
+          Once Pointer is in the stores, install it from there; the stores update it by themselves. These files are for everything else:
+          - **Chrome or Edge:** \`bid-pointer-chrome-$VERSION.zip\`, unzipped and loaded with "Load unpacked"
+          - **Firefox or Zen:** \`bid-pointer-firefox-$VERSION-unsigned.xpi\`, as a temporary add-on (Firefox removes it when it restarts)
+          - **Safari:** \`bid-pointer-safari-$VERSION.zip\`, with Safari's "Add Temporary Extension…" (Safari 26 or later, for 24 hours)
+
+          \`bid-pointer-source-$VERSION.zip\` is the source the add-on is built from.
+          EOF
+          sed -i 's/^          //' notes.md
+
+          if gh release view "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" > /dev/null 2>&1; then
+            gh release upload "$GITHUB_REF_NAME" release/* --clobber --repo "$GITHUB_REPOSITORY"
+          else
+            gh release create "$GITHUB_REF_NAME" release/* --repo "$GITHUB_REPOSITORY" --verify-tag \
+              --title "bid Pointer $VERSION" --notes-file notes.md
+          fi
+
+  chrome-web-store:
+    name: Submit to the Chrome Web Store
+    # Skipped until the store is set up (docs/public-release.md); the first version goes in by hand.
+    if: github.ref_type == 'tag' && vars.CWS_ITEM_ID != ''
+    needs: release
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+
+      - uses: actions/download-artifact@v8
+        with:
+          name: packages
+          path: release
+
+      - name: Upload and submit for review
+        env:
+          CWS_SERVICE_ACCOUNT: ${{ secrets.CWS_SERVICE_ACCOUNT }}
+          CWS_PUBLISHER_ID: ${{ vars.CWS_PUBLISHER_ID }}
+          CWS_ITEM_ID: ${{ vars.CWS_ITEM_ID }}
+          CWS_PUBLISH_TYPE: ${{ vars.CWS_PUBLISH_TYPE }}
+        run: |
+          if grep -q TODO PRIVACY.md; then
+            echo "::error::PRIVACY.md still has TODOs; fill them in before submitting"
+            exit 1
+          fi
+          node scripts/chrome-web-store.mjs release/bid-pointer-chrome-*.zip

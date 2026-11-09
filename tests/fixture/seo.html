@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Planted for the SEO check (scripts/seo-check.mjs): a title too long for Google, no
+         description, a canonical without an address, two language codes Google gets wrong (se, cz),
+         no share image and some share tags missing, no structured data. -->
+    <title>Superior Room with a Sea View and a Private Balcony | Hotel Cresanka on the Island of Cres</title>
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" />
+    <link rel="alternate" hreflang="hr" href="https://www.cresanka.hr/smjestaj/superior" />
+    <link rel="alternate" hreflang="en" href="https://www.cresanka.hr/seo/rooms/superior" />
+    <link rel="alternate" hreflang="se" href="https://www.cresanka.hr/se/rum/superior" />
+    <link rel="alternate" hreflang="cz" href="https://www.cresanka.hr/cz/pokoje/superior" />
+    <link rel="alternate" hreflang="x-default" href="https://www.cresanka.hr/smjestaj/superior" />
+    <meta property="og:title" content="Superior room with a sea view" />
+    <meta property="og:description" content="A bright room with a balcony over the bay." />
+    <link rel="icon" href="/favicon.ico" />
+    <style>
+      body { margin: 0; font-family: system-ui, sans-serif; color: #111; }
+      header { height: 64px; display: flex; align-items: center; justify-content: space-between; padding: 0 24px; border-bottom: 1px solid #ddd; }
+      .social svg { width: 24px; height: 24px; display: block; }
+      .hero { padding: 32px 24px; background: #eef4fb; }
+      .hero h1 { font-size: 44px; margin: 16px 0 8px; }
+      .gallery { padding: 32px 24px 48px; display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-start; }
+      .gallery h2, .gallery h4 { flex-basis: 100%; margin: 0; }
+      .relative { position: relative; }
+      .hidden { display: none; }
+      footer { padding: 24px; background: #222; display: flex; gap: 24px; }
+      footer a { color: #fff; }
+    </style>
+  </head>
+  <body>
+    <header>
+      pages-cresanka
+      <!-- an icon link: no text, no label -->
+      <a class="social" href="https://www.instagram.com/cresanka"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5" fill="#c13584" /></svg></a>
+    </header>
+
+    <!-- DebugBlock.tsx labels, so the images say which CMS block they're in -->
+    <div class="relative">
+      <div class="hidden"><span>[Hero - 12]</span><button type="button">𝛥 Block Data</button></div>
+      <section class="hero">
+        <img class="hero-photo" src="/seo/img/hero.png" width="640" height="300" />
+        <h1>Superior room</h1>
+        <p>Sea view, 42 m², breakfast included.</p>
+      </section>
+    </div>
+
+    <div class="relative">
+      <div class="hidden"><span>[RoomGallery - 31]</span><button type="button">𝛥 Block Data</button></div>
+      <section class="gallery">
+        <h2>Amenities</h2>
+        <img src="/seo/img/terrace.png" alt="The terrace over the bay at sunset" width="300" height="200" />
+        <img src="/seo/img/pool.png" alt="" width="300" height="200" />
+        <h4>Bathroom</h4>
+        <img src="/seo/img/icon.png" alt="" width="24" height="24" />
+      </section>
+    </div>
+
+    <footer>
+      <a href="/seo/rooms/standard">Standard room</a>
+      <a href="/seo/old-offer">Last year's offer</a>
+      <a href="/seo/moved">Spa</a>
+    </footer>
+  </body>
+</html>

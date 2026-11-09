@@ -1,0 +1,104 @@
+/* The sections a public Pointer needs: the OK on what it sends, the ClickUp space, where it
+   shows up, and the optional rewriting. Imported by options.css. */
+
+/* ---------- What Pointer sends ---------- */
+
+.consent-list {
+  display: grid;
+  gap: 10px;
+  margin: 16px 0 0;
+  padding-left: 18px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.consent-list b {
+  font-weight: 600;
+}
+
+.consent-privacy {
+  margin-top: 12px;
+}
+
+/* Text links (the privacy policy, z.ai): bid's ink-orange, underlined, never the browser's blue. */
+.help a,
+.consent-privacy a {
+  border-radius: var(--radius-sm);
+  color: var(--orange-ink);
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+.help a:hover,
+.consent-privacy a:hover {
+  color: var(--ink);
+}
+
+.help a:focus-visible,
+.consent-privacy a:focus-visible {
+  outline: none;
+  box-shadow: var(--ring);
+}
+
+/* Until the person agrees, the rest of the page waits, and this section, last on the page, is all there is. */
+body.is-consenting .after-setup {
+  display: none;
+}
+
+body.is-consenting #consentGroup {
+  border-top: 0;
+}
+
+/* ---------- A setting that still needs an answer ---------- */
+
+.group.is-needed .group-head h2::after {
+  content: 'Needed';
+  margin-left: 10px;
+  padding: 2px 10px;
+  border-radius: var(--radius-pill);
+  background: var(--orange-wash);
+  color: var(--orange-ink);
+  font-size: 12px;
+  font-weight: 600;
+  vertical-align: 2px;
+}
+
+.group.is-needed select.select {
+  border-color: var(--orange-dark);
+  background-color: var(--orange-wash);
+}
+
+/* The space picker shows the project-list icon, not the person icon (beats options.css's select.select). */
+select.select.select--list {
+  background-image: var(--icon-list), var(--icon-chevron);
+}
+
+/* ---------- Site list ---------- */
+
+textarea.textarea {
+  width: 100%;
+  min-height: 104px;
+  padding: 12px 18px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--paper);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 14px;
+  line-height: 1.6;
+  resize: vertical;
+  transition:
+    border-color 150ms ease,
+    box-shadow 150ms ease;
+}
+
+textarea.textarea:hover {
+  border-color: var(--ink-3);
+}
+
+textarea.textarea:focus-visible {
+  outline: none;
+  border-color: var(--orange-dark);
+  box-shadow: var(--ring);
+}
