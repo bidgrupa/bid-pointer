@@ -25,6 +25,7 @@ Releases follow webpify's setup (`github.com/bidgrupa/webpify`):
 | [CHROMEWEBSTORE.md](CHROMEWEBSTORE.md), [FIREFOXADDONS.md](FIREFOXADDONS.md) | Every store field, ready to paste, with the version history and review notes. |
 | [PRIVACY.md](PRIVACY.md) | The privacy policy; its GitHub link is the one the stores give. Every build also renders it into `privacy.html`, which Pointer links from its settings. |
 | [store/firefox/approval-notes.txt](store/firefox/approval-notes.txt) | What Mozilla's reviewers get with every version. |
+| [demo/index.html](demo/index.html) | A made-up hotel's staging site with four CMS blocks: the page reviewers try Pointer on, at https://bidgrupa.github.io/bid-pointer/ (the [Demo page workflow](.github/workflows/demo-page.yml)), and the one in the store screenshots. |
 
 ```
 pnpm release    # typecheck, unit tests, build, then release/: the Chrome zip (no `key`), the Firefox

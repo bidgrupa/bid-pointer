@@ -116,13 +116,16 @@ Data use certification:
 **Additional instructions** (paste as plain text, with the token filled in):
 
 ```
-Pointer works with a ClickUp workspace; the account above is a test one made for review. Its API token, to paste into Pointer: TODO pk_…
+Pointer works with a ClickUp workspace; the account above is a test one made for review, with nothing real in it. Its API token, to paste into Pointer: ⬜ pk_…
 
 1. After installing, Pointer's settings page opens. Read what Pointer sends and click "I agree".
-2. Paste the API token into step 3. Pointer connects and picks the workspace's only space, "Review", by itself.
-3. Open any website, for example https://example.com, and click the bid Pointer toolbar button. A "Pointer" button appears in the bottom-right corner.
-4. Click the page's heading, type a note such as "This heading should be bigger", choose the project "Website", and press Enter. A task with a screenshot appears in ClickUp (log in with the account above), in the Review space.
-5. Optional: the SEO button next to Pointer checks the page; tick a finding and press Send.
+2. Paste the test account's API token into step 3. Pointer connects and picks the test workspace's only space, "Review", by itself.
+3. Under "Setup code", paste this code and press "Use these settings". It adds the demo site to Pointer's sites (the code holds no token or key):
+   PTR1.eJyrVipTsjLUUSpXsopWSspMSS8qLUjUS88syShN0svMV4rVUcpXsiopKk2tBQAmiA4Z
+4. Open the demo site https://bidgrupa.github.io/bid-pointer/ (a made-up hotel). Pointer appears in the bottom-right corner by itself.
+5. Click "Pointer", then click something on the page, e.g. the "Book a stay" button. The note names the page's section (SiteHeader). Choose the project "Hotel Pointer", type a note and press Enter. A task with a marked-up screenshot appears in the test workspace (log in with the account above to see it).
+6. The "SEO" button next to Pointer checks the page; tick a finding and press Send.
+7. Optional: in the settings, "Enable Page Specific Task" collects several notes on a page as numbered pins, published together as one task.
 
 Z.ai rewriting is optional and off without a key. Pointer works fully without it.
 ```

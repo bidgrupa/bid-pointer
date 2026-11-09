@@ -16,7 +16,14 @@ including a public repository, so the GitHub link to PRIVACY.md is the privacy p
 ## Before the first store submission
 
 - **Public repository.** The privacy policy is [PRIVACY.md](../PRIVACY.md) at `https://github.com/bidgrupa/bid-pointer/blob/main/PRIVACY.md`, which opens for reviewers only once the repository is public: see [Making the repository public](#making-the-repository-public). Every build also renders it into `privacy.html`, which Pointer links from its settings. The release workflow refuses to submit while PRIVACY.md has a TODO.
-- **Review test account.** Reviewers need a ClickUp workspace. Make a free ClickUp account and workspace just for this ("Pointer Review"), with one space, "Review", holding a folderless list "Website". Generate its API token (Settings › Apps). The login and token go in the store forms and in the `AMO_TEST_ACCOUNT` secret, never in the repository.
+- **Review test account.** Reviewers can only get past Pointer's setup with a ClickUp token, so they get one of their own:
+  1. Sign up at clickup.com with a BID address that isn't a person's (an alias such as `pointer-review@bid.agency`), on the free plan. Its API is enough: 100 requests a minute.
+  2. Name the workspace "Pointer Review". Give it one space, "Review", holding one folderless list, "Hotel Pointer" (the demo site's hotel). Delete anything ClickUp adds on its own, so the space has just that list.
+  3. Settings › Apps › API Token › Generate. Keep the login and the token in BID's password manager.
+  4. The login and token go in the Chrome dashboard's Test instructions and in the `AMO_TEST_ACCOUNT` secret, never in the repository.
+
+  Not a guest in BID's own workspace: the token goes to Google's and Mozilla's reviewers (and to Mozilla again with every version), Pointer's person picker would show them BID's members, and their test tasks would land among real ones. A separate workspace has nothing to leak.
+- **Demo page.** Reviewers try Pointer on [demo/index.html](../demo/index.html), a made-up hotel's staging site with four CMS blocks, published at <https://bidgrupa.github.io/bid-pointer/> by the **Demo page** workflow. Turn it on once: **Settings → Pages → Build and deployment → Source: GitHub Actions**, then run **Demo page** from the Actions tab (later it redeploys whenever `demo/` changes) and check that the address opens. The reviewers' instructions give them a setup code that adds that site to Pointer's sites, so Pointer starts there by itself; the code holds no token or key.
 - **Listing text.** [CHROMEWEBSTORE.md](../CHROMEWEBSTORE.md) has the description, single purpose, permission justifications and data-use answers, ready to paste; [FIREFOXADDONS.md](../FIREFOXADDONS.md) the same for AMO.
 - **Graphics.** The store icon is built (`icons/store-128.png`). Five 1280×800 screenshots and the 440×280 promo tile are in `store/chrome/`; `pnpm screenshots` renders them again after a UI change.
 - **Licence.** Pointer is All Rights Reserved (`"license": "UNLICENSED"` in package.json, and [LICENSE](../LICENSE)) unless bid decides otherwise: the code is public to read, not to reuse. Nothing in it requires an open licence.

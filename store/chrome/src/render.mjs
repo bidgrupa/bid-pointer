@@ -3,9 +3,10 @@
 //   node store/chrome/src/render.mjs
 //
 // Each screenshot is frame.html: a caption over a browser window. What's in the window is real: the
-// built extension, loaded into Chrome, at work on a made-up hotel's staging site (site.html), with
-// the screenshots' made-up agency set up in it. ClickUp and Z.ai are answered inside the browser,
-// so nothing reaches them, and the answers are what the shots show (people, projects, the rewrite).
+// built extension, loaded into Chrome, at work on a made-up hotel's staging site (demo/index.html,
+// which is also the reviewers' demo page), with the screenshots' made-up agency set up in it.
+// ClickUp and Z.ai are answered inside the browser, so nothing reaches them, and the answers are
+// what the shots show (people, projects, the rewrite).
 //
 // Needs Google Chrome; set CHROME to its path if it isn't in the usual place.
 import puppeteer from 'puppeteer-core';
@@ -19,7 +20,7 @@ import { seoState } from '../../../scripts/seo-check.mjs';
 const root = fileURLToPath(new URL('../../..', import.meta.url));
 process.chdir(root);
 const OUT = 'store/chrome';
-const HOST = 'staging.hotel-lumen.example';
+const HOST = 'staging.hotel-pointer.example';
 const PAGE_URL = `https://${HOST}/rooms/sea-view`;
 const WINDOW = { width: 1136, height: 582 }; // the window in frame.html
 /**
@@ -32,7 +33,7 @@ if (!existsSync('dist/manifest.json')) throw new Error('Run `pnpm build` first')
 
 // ---------- The made-up agency, its ClickUp, and the hotel's site ----------
 
-const PROJECT = { listId: '901400000001', label: 'Hotel Lumen › Development' };
+const PROJECT = { listId: '901400000001', label: 'Hotel Pointer › Development' };
 const ME = { id: 101, username: 'Ana Kovač', email: 'ana@studio.example' };
 const CLICKUP = {
   '/user': { user: ME },
@@ -48,7 +49,7 @@ const CLICKUP = {
   '/team/9000000001/space': { spaces: [{ id: '90000000001', name: 'Websites' }] },
   '/space/90000000001/folder': {
     folders: [
-      { id: 'f1', name: 'Hotel Lumen', lists: [{ id: PROJECT.listId, name: 'Development' }, { id: '901400000002', name: 'QA' }] },
+      { id: 'f1', name: 'Hotel Pointer', lists: [{ id: PROJECT.listId, name: 'Development' }, { id: '901400000002', name: 'QA' }] },
       { id: 'f2', name: 'Villa Sora', lists: [{ id: '901400000003', name: 'Development' }] },
     ],
   },
@@ -78,14 +79,14 @@ const SETTINGS = {
   domainProjects: {},
   recent: [],
 };
-const site = readFileSync('store/chrome/src/site.html', 'utf8');
+const site = readFileSync('demo/index.html', 'utf8');
 /** The hotel's staging site: hidden from Google, as staging should be, with robots.txt and a sitemap. */
 const ROUTES = {
   '/rooms/sea-view': { type: 'text/html; charset=utf-8', body: site },
   '/robots.txt': { type: 'text/plain', body: `User-agent: *\nDisallow: /admin/\nSitemap: https://${HOST}/sitemap.xml\n` },
   '/sitemap.xml': {
     type: 'application/xml',
-    body: `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>https://www.hotel-lumen.example/rooms/sea-view</loc></url></urlset>`,
+    body: `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>https://www.hotel-pointer.example/rooms/sea-view</loc></url></urlset>`,
   },
 };
 

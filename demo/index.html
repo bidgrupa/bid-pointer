@@ -1,14 +1,18 @@
 <!doctype html>
-<!-- A made-up hotel's staging site for the store screenshots (render.mjs). Its sections are wrapped
-     the way bid's CMS blocks are (a hidden "[Name - id]" label first), so Pointer names them. -->
+<!-- A made-up hotel's staging site: the demo page store reviewers try Pointer on
+     (https://bidgrupa.github.io/bid-pointer/, published by .github/workflows/demo-page.yml), and the
+     page in the store screenshots (store/chrome/src/render.mjs). Its sections are wrapped the way
+     bid's CMS blocks are (a hidden "[Name - id]" label first), so Pointer names them. -->
 <html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Sea-view rooms on the Adriatic, a few steps from the water | Hotel Lumen</title>
+    <!-- a staging site keeps out of search engines, and Pointer's SEO check expects that -->
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Sea-view rooms on the Adriatic, a few steps from the water | Hotel Pointer</title>
     <meta name="description" content="Rooms and suites by the sea, with breakfast on the terrace and the beach a minute away." />
-    <link rel="canonical" href="https://www.hotel-lumen.example/rooms/sea-view" />
-    <meta property="og:title" content="Sea-view rooms at Hotel Lumen" />
+    <link rel="canonical" href="https://www.hotel-pointer.example/rooms/sea-view" />
+    <meta property="og:title" content="Sea-view rooms at Hotel Pointer" />
     <style>
       * {
         box-sizing: border-box;
@@ -163,13 +167,16 @@
         color: #d9cfc4;
         font-size: 14px;
       }
+      footer a {
+        color: #ffba90;
+      }
     </style>
   </head>
   <body>
     <div class="relative">
       <div class="hidden"><span>[SiteHeader - 1001]</span></div>
       <header>
-        <span class="logo">LUMEN</span>
+        <span class="logo">POINTER</span>
         <nav><span>Rooms</span><span>Dining</span><span>Spa</span><span>Offers</span></nav>
         <span class="book-outline">Book a stay</span>
       </header>
@@ -180,7 +187,7 @@
       <section class="hero">
         <div class="hills"></div>
         <div class="hero-text">
-          <div class="kicker">Hotel Lumen · Adriatic coast</div>
+          <div class="kicker">Hotel Pointer · Adriatic coast</div>
           <h1>Wake up to the sea</h1>
           <p>Rooms and suites a few steps from the water.</p>
           <div class="buttons">
@@ -213,6 +220,9 @@
       </section>
     </div>
 
-    <footer>Hotel Lumen · Obala 12 · +385 00 000 000</footer>
+    <div class="relative">
+      <div class="hidden"><span>[SiteFooter - 1099]</span></div>
+      <footer>Hotel Pointer is made up: this page is for trying <a href="https://github.com/bidgrupa/bid-pointer">bid Pointer</a>.</footer>
+    </div>
   </body>
 </html>
