@@ -45,8 +45,8 @@ Putting Pointer in the stores the first time is described in [docs/public-releas
 
 Pointer is listed on addons.mozilla.org (AMO) from 1.0.0. The first listed version goes in by hand ([docs/public-release.md](docs/public-release.md#addonsmozillaorg)); after that, every tagged release is submitted by the workflow:
 
-1. Sign in to <https://addons.mozilla.org> with the BID-owned account that owns `pointer@bid.hr`. Open **Tools → Manage API Keys** (<https://addons.mozilla.org/developers/addon/api/key/>) and generate credentials.
-2. In the GitHub repository, **Settings → Secrets and variables → Actions → New repository secret**:
+1. The keys are those of BID's AMO account, the one that owns webpify and, after the handover in [docs/public-release.md](docs/public-release.md#0-move-the-add-on-to-bids-account-once), `pointer@bid.hr`. An account has one pair, so if webpify's repository already has them, use the same values: generating new ones (**Tools → Manage API Keys**, <https://addons.mozilla.org/developers/addon/api/key/>) revokes the old pair, and webpify's secrets would need the new ones too.
+2. Add them only after 1.0.0 has gone in by hand: set before the v1.0.0 tag, the workflow would try to submit 1.0.0 itself, without the listing text. In the GitHub repository, **Settings → Secrets and variables → Actions → New repository secret**:
    - `AMO_JWT_ISSUER`: the "JWT issuer" value
    - `AMO_JWT_SECRET`: the "JWT secret" value
    - `AMO_TEST_ACCOUNT`: the review test account, as reviewers should read it (ClickUp login, password and API token). It's appended to the approval notes, so it never sits in the repository.

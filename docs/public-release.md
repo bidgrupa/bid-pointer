@@ -29,7 +29,7 @@ including a public repository, so the GitHub link to PRIVACY.md is the privacy p
 - **Licence.** Pointer is All Rights Reserved (`"license": "UNLICENSED"` in package.json, and [LICENSE](../LICENSE)) unless bid decides otherwise: the code is public to read, not to reuse. Nothing in it requires an open licence.
 - **Accounts.** All owned by BID, not a person, and the same as webpify's where they exist:
   - the Chrome Web Store publisher (one-time fee) with colleagues as members and a monitored contact email
-  - the addons.mozilla.org account that owns `pointer@bid.hr`, the one whose API keys signed the earlier versions
+  - BID's addons.mozilla.org account, the one that owns webpify. The earlier, unlisted versions of `pointer@bid.hr` were signed from another account, which first makes BID's account an owner: see [Move the add-on to BID's account](#0-move-the-add-on-to-bids-account-once).
 
 ## Making the repository public
 
@@ -107,9 +107,18 @@ From the next tag on, the job uploads the release's Chrome zip and submits it fo
 
 Like the Chrome Web Store: the first listed version goes in by hand, then the release workflow submits every tagged release, and Firefox updates installed copies from AMO within a day of approval. Everything to paste is in [FIREFOXADDONS.md](../FIREFOXADDONS.md).
 
+### 0. Move the add-on to BID's account (once)
+
+`pointer@bid.hr` was created, and 0.2.0–0.10.0 signed, from the account of the colleague who built Pointer. Pointer moves to BID's AMO account, the one that owns webpify, so its listing, reviews and API keys sit with bid's other add-on. Only an owner can add authors, so the colleague starts:
+
+1. **The current owner** signs in to the [Developer Hub](https://addons.mozilla.org/developers/addons), opens bid Pointer → **Edit Listing** → **Manage Authors & License**, enters the email address of BID's account under "Enter a new author's email address", leaves the role at **Owner** with **Listed** ticked, and clicks **Save Changes**.
+2. **BID's account** gets an email invitation. Sign in as that account and accept it; until then it's a pending author and can't upload anything.
+3. **Check** that bid Pointer, with its unlisted versions, is under **My Add-ons** for BID's account.
+4. **The colleague** can stay on as an author or remove themselves (the ✕ next to their address, then **Save Changes**). The release workflow uses BID's keys either way.
+
 ### 1. First submission (by hand)
 
-1. Sign in to <https://addons.mozilla.org/developers/> with the BID-owned account that owns `pointer@bid.hr` (two-step authentication on). Open bid Pointer → **Upload New Version** → **On this site** → upload `bid-pointer-firefox-<v>-unsigned.xpi`. Compatibility: Firefox only.
+1. Sign in to <https://addons.mozilla.org/developers/> with BID's account (step 0; two-step authentication on). Open bid Pointer → **Upload New Version** → **On this site** → upload `bid-pointer-firefox-<v>-unsigned.xpi`. Compatibility: Firefox only.
 2. **Source code:** Yes → upload `bid-pointer-source-<v>.zip` from the same release.
 3. **Describe add-on:** name, summary, description, category, support email and website, licence, privacy policy, and the notes to reviewer with the test account, all from FIREFOXADDONS.md.
 4. **Submit.** Listed versions usually pass the automatic review within hours; some get a human review first, which can take days. Mozilla's reviewers rebuild from the source zip; the build is reproducible (below).

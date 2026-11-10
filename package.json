@@ -8,7 +8,7 @@
     "build": "node scripts/make-icons.mjs && node build.mjs",
     "dev": "node scripts/make-icons.mjs && node build.mjs --watch",
     "typecheck": "tsc --noEmit",
-    "test": "node --test tests/",
+    "test": "node --test \"tests/*.test.mjs\"",
     "smoke": "node scripts/smoke.mjs --browser=chrome",
     "smoke:edge": "node scripts/smoke.mjs --browser=edge",
     "package": "node scripts/make-icons.mjs && node build.mjs && node scripts/package.mjs",
