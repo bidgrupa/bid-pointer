@@ -11,7 +11,7 @@
 - **How to distribute this version:** On this site. AMO has no link-only option like the Chrome Web Store's Unlisted: an add-on is either listed (public, searchable) or self-distributed. Listed, as webpify is, gives one-click installs and automatic updates from AMO without an update feed of bid's own. The add-on ID `pointer@bid.hr` already has unlisted (self-distributed) versions up to 0.10.0; upload this one as a new version of that add-on, so installed copies update from AMO. Upload it from BID's account (webpify's), once that account is an owner of the add-on ([docs/public-release.md](docs/public-release.md#0-move-the-add-on-to-bids-account-once)).
 - **File:** `release/bid-pointer-firefox-<v>-unsigned.xpi` from `pnpm package`, or the same file from the GitHub release. Mozilla signs it.
 - **Compatibility:** Firefox only. Leave Firefox for Android unticked; Pointer isn't tested there.
-- **Validation:** 24 expected warnings, all "Unsafe assignment to innerHTML": UI templates whose values all go through `esc()`. The approval notes say so.
+- **Validation:** 25 expected warnings: 24 "Unsafe assignment to innerHTML", UI templates whose values all go through `esc()`, and 1 "Unsafe assignment to outerHTML", the SEO panel's links box (src/content/seo/view.ts, `linksHtml`), which holds only numbers and fixed text. The approval notes say so.
 
 ## Source code
 

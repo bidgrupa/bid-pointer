@@ -8,7 +8,7 @@ To rebuild (Ubuntu 24.04, Node 22 or later; any CPU):
 3. pnpm build
 dist-firefox/ is then identical to the submitted package. README.md, "Building from source", has the details.
 
-No remote code and no secrets: the person pastes their own ClickUp API token, and optionally a Z.ai API key, on the options page. Requests go only to api.clickup.com and api.z.ai, and, for the SEO check, to the site being checked (its robots.txt, sitemap and links). UI templates are set with innerHTML; every value put into them goes through esc() (src/content/view.ts, src/options/dom.ts), which escapes & < > " '. No third-party code runs in the add-on.
+No remote code and no secrets: the person pastes their own ClickUp API token, and optionally a Z.ai API key, on the options page. Requests go only to api.clickup.com and api.z.ai, and, for the SEO check, to the site being checked (its robots.txt, sitemap and links). UI templates are set with innerHTML; every value put into them goes through esc() (src/content/view.ts, src/options/dom.ts), which escapes & < > " '. The one outerHTML assignment (src/content/seo/panel.ts) is the SEO panel's links box from linksHtml() in src/content/seo/view.ts, which holds only numbers and fixed text. No third-party code runs in the add-on.
 
 TESTING
 

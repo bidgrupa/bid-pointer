@@ -132,8 +132,8 @@ Z.ai rewriting is optional and off without a key. Pointer works fully without it
 
 ## Developer info
 
-- **Publisher:** a BID-owned publisher account rather than a personal one, with colleagues added as members. An account can only ever have one publisher. Use the same one as webpify.
-- **Publisher name:** BID Grupa, as bid.agency writes it (webpify's docs have "BID grupa"; use one spelling for both). Shown on the listing.
+- **Publisher:** webpify's, BID-owned, with colleagues as members. An account can only ever have one publisher, and everything in this section is set on the publisher, not on the item: it was set up for webpify, Pointer's listing shows the same, and a change here changes webpify's listing too. So check these against the dashboard rather than enter them. (webpify's own CHROMEWEBSTORE.md still has placeholders for them, so the dashboard is the only record of what was entered.)
+- **Publisher name:** BID Grupa, as bid.agency writes it. If the dashboard already says "BID grupa" (webpify's docs suggest that spelling), leave it. Shown on the listing.
 - **Contact email:** `info@bid.agency`, the address bid.agency gives. It's shown publicly, and Google sends policy notices to it.
 - **Trader declaration:** "Trader", verified by Google and shown to EU users. The details as bid.agency publishes them (footer and privacy policy):
   - BID Grupa d.o.o., OIB 40985193097

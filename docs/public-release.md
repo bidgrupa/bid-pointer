@@ -27,9 +27,10 @@ including a public repository, so the GitHub link to PRIVACY.md is the privacy p
 - **Listing text.** [CHROMEWEBSTORE.md](../CHROMEWEBSTORE.md) has the description, single purpose, permission justifications and data-use answers, ready to paste; [FIREFOXADDONS.md](../FIREFOXADDONS.md) the same for AMO.
 - **Graphics.** The store icon is built (`icons/store-128.png`). Five 1280×800 screenshots and the 440×280 promo tile are in `store/chrome/`; `pnpm screenshots` renders them again after a UI change.
 - **Licence.** Pointer is All Rights Reserved (`"license": "UNLICENSED"` in package.json, and [LICENSE](../LICENSE)) unless bid decides otherwise: the code is public to read, not to reuse. Nothing in it requires an open licence.
-- **Accounts.** All owned by BID, not a person, and the same as webpify's where they exist:
-  - the Chrome Web Store publisher (one-time fee) with colleagues as members and a monitored contact email
-  - BID's addons.mozilla.org account, the one that owns webpify. The earlier, unlisted versions of `pointer@bid.hr` were signed from another account, which first makes BID's account an owner: see [Move the add-on to BID's account](#0-move-the-add-on-to-bids-account-once).
+- **Accounts.** Pointer goes on webpify's store accounts, which already exist: webpify 0.3.1 went to both stores on 2026-10-14, and its release workflow has submitted since (0.5.0 on 2026-11-02). Nothing new to register or pay for:
+  - the Chrome Web Store publisher, with its Google Cloud project and service account for the API. The publisher's name, contact email, trader declaration and members are shared: Pointer's listing shows the same ones as webpify's, and changing them changes both.
+  - BID's addons.mozilla.org account and its API keys. The earlier, unlisted versions of `pointer@bid.hr` were signed from another account, which first makes BID's account an owner: see [Move the add-on to BID's account](#0-move-the-add-on-to-bids-account-once).
+- **Secrets from webpify.** GitHub never shows a secret again once it's saved, so webpify's can't be copied from its repository. Each store says below where to get the values. If a bidgrupa organisation owner can do it, the simplest is to save them once as organisation secrets (**bidgrupa → Settings → Secrets and variables → Actions**) available to both repositories; a repository secret with the same name wins over an organisation one, so delete webpify's own copies when moving them.
 
 ## Making the repository public
 
@@ -53,9 +54,12 @@ the first submission. Two things first:
       git remote add public https://github.com/bidgrupa/bid-pointer.git
       git push public public:main
       ```
-   4. Clone the new repository and work there from now on. Set its Actions secrets and variables
-      again (RELEASING.md, docs above), and check that `https://github.com/bidgrupa/bid-pointer/blob/main/PRIVACY.md` opens in a
-      private window.
+   4. Clone the new repository and work there from now on. Its Actions secrets and variables start
+      empty; add each when its store step says to (the AMO keys only after 1.0.0 is in by hand), and
+      check that `https://github.com/bidgrupa/bid-pointer/blob/main/PRIVACY.md` opens in a private window.
+
+   Done on 2026-11-09: `bidgrupa/bid-pointer-private` holds the old history, and the public
+   repository starts at "bid Pointer 1.0.0".
 
    Rewriting the history in place (force-pushing `main`) isn't enough: GitHub keeps old commits
    reachable by their IDs and in pull requests until its support purges them.
@@ -70,8 +74,8 @@ The first version goes in by hand. After that, the release workflow's `chrome-we
 
 ### 1. Prepare (once)
 
-1. **Publisher.** Use BID's existing publisher, webpify's. An account can only ever have one publisher, and its name shows on the listing. If there's none yet: a BID-owned Google account with 2-Step Verification, the [Developer Dashboard](https://chrome.google.com/webstore/devconsole), the developer agreement and the one-time fee.
-2. **Publisher settings:** name (BID grupa), a verified contact email someone reads, the trader declaration (EU rules, see "Developer info" in CHROMEWEBSTORE.md), and colleagues as members.
+1. **Publisher.** Sign in to the [Developer Dashboard](https://chrome.google.com/webstore/devconsole) with the BID Google account that publishes webpify (or as one of its members). An account can only ever have one publisher, so Pointer goes in next to webpify; don't register another.
+2. **Check the publisher settings** against "Developer info" in CHROMEWEBSTORE.md: name, verified contact email, trader declaration and members. They were set up for webpify, so this is a check, not a setup. If something differs, the dashboard's value is the one both listings show; change it only if it should change for webpify too.
 3. **Package.** Make a release (RELEASING.md) and download its `bid-pointer-chrome-<v>.zip`. It has no `key`: the store gives the item its own ID.
 
 ### 2. First submission (by hand)
@@ -89,18 +93,20 @@ The first version goes in by hand. After that, the release workflow's `chrome-we
 
 ### 3. Updates on every release (once)
 
-1. **Google Cloud project.** In the [Google Cloud console](https://console.cloud.google.com/), use webpify's publishing project or create one, then **APIs & Services → Library → Chrome Web Store API → Enable**.
-2. **Service account.** **IAM & Admin → Service accounts → Create service account** (no roles). **Keys → Add key → Create new key → JSON**. The file downloads once. (A publisher can have one service account, so if webpify already has one, use its key.)
-3. **Let it publish.** In the Developer Dashboard's **Account** section, add the service account's email.
-4. **GitHub.** Repository **Settings → Secrets and variables → Actions**:
+webpify's Google Cloud project, Chrome Web Store API and service account already do this for webpify, and the service account publishes for the whole publisher, Pointer included (a publisher has one). So nothing new in Google Cloud or the dashboard; Pointer's repository only needs the same values:
+
+1. **The service account's key.** Use the JSON key file saved when webpify was set up, if BID kept it (e.g. in the password manager). If not, make a second key for the same service account: [Google Cloud console](https://console.cloud.google.com/) → webpify's publishing project → **IAM & Admin → Service accounts** → the one listed in the dashboard's **Account** section → **Keys → Add key → Create new key → JSON**. webpify's key keeps working. The file downloads once.
+2. **GitHub.** Repository **Settings → Secrets and variables → Actions** (or the organisation secrets above):
    - Secret `CWS_SERVICE_ACCOUNT`: the whole JSON key file. Delete the downloaded file afterwards.
-   - Variables `CWS_PUBLISHER_ID` (Dashboard › Settings) and `CWS_ITEM_ID` (step 2.1).
+   - Variable `CWS_PUBLISHER_ID`: the same as webpify's (variables, unlike secrets, can be read in webpify's repository settings; also Dashboard › Settings).
+   - Variable `CWS_ITEM_ID`: Pointer's own, from step 2.1.
    - Optional variable `CWS_PUBLISH_TYPE` = `STAGED_PUBLISH`: approved versions then wait until someone publishes them in the dashboard.
 
 From the next tag on, the job uploads the release's Chrome zip and submits it for review. It's skipped while `CWS_ITEM_ID` isn't set. Things to know:
 - **Versions only go up.** The store refuses a package whose version isn't higher than the last one uploaded.
 - **A newer release replaces one still in review.** The job cancels the older submission and submits the new version.
-- **A staged version blocks the job.** Publish or cancel it in the dashboard, then re-run the job.
+- **A staged version blocks the job.** Publish or cancel it in the dashboard, then re-run the job. Re-running for a version that's already submitted or published does nothing.
+- **Visibility changes** made in the dashboard (Unlisted to Public, say) need one manual publish there before the job can publish again.
 - **New permissions.** A permission that shows a warning disables Pointer for existing users until they accept it.
 
 ## addons.mozilla.org

@@ -66,11 +66,17 @@ const openExtensionPage = async (p, url, ready) => {
   }
   throw new Error(`${url} never showed ${ready}`);
 };
+// Firefox 15x won't screenshot moz-extension:// pages over WebDriver BiDi ("privileged scope");
+// web pages still work, so only the options page's screenshots are skipped.
+const extensionScreenshot = (p, path) =>
+  p.screenshot({ path, fullPage: true }).catch((e) => info(`no screenshot of ${path.split(/[\\/]/).pop()}: ${e.message.split('\n')[0]}`));
 
 const b = await puppeteer.launch({
   browser: 'firefox',
   executablePath: FIREFOX,
   headless: !('headed' in args),
+  // Since Firefox 15x, WebDriver BiDi can't open or script moz-extension:// pages without it
+  args: ['-remote-allow-system-access'],
   defaultViewport: { width: 1280, height: 800 },
   extraPrefsFirefox: {
     'extensions.webextensions.uuids': JSON.stringify({ 'pointer@bid.hr': UUID }),
@@ -92,7 +98,7 @@ try {
   check('options page renders', (await opts.title()) === 'bid Pointer options', await opts.title());
   check('site access granted at install', await opts.$eval('#accessGroup', (el) => el.hidden));
   check('first run shows the walkthrough', await opts.$eval('#setupSteps', (el) => el.offsetParent !== null));
-  await opts.screenshot({ path: `${outDir}/firefox-0-setup.png`, fullPage: true });
+  await extensionScreenshot(opts, `${outDir}/firefox-0-setup.png`);
   const shown = await opts.$$eval('#shortcutKeys kbd', (els) => els.map((el) => el.textContent).join('+'));
   info(`shortcut Firefox reports: ${shown || '(none bound)'}`);
 
@@ -243,7 +249,9 @@ try {
   const home = await dockState(page);
   const topLeft = launcherSpot('top-left', home.launcher, home.viewport);
   await pressAndDrag(page, 260, 180);
-  await delay(400);
+  // the ring glides over from the far corner (GLIDE_MS 70: ~450 ms to come within 2 px); 400 ms
+  // left it ~3 px short in headless Firefox 158
+  await delay(700);
   const midDrag = await dockState(page);
   await page.screenshot({ path: `${outDir}/firefox-dock-drag.png` });
   check(
@@ -958,7 +966,7 @@ try {
   await openExtensionPage(opts, `${BASE}/options.html?again`, '#setupWho');
   await delay(600);
   check('options show the connected account', /Smoke Test/.test(await opts.$eval('#setupWho', (el) => el.textContent)));
-  await opts.screenshot({ path: `${outDir}/firefox-9-options.png`, fullPage: true });
+  await extensionScreenshot(opts, `${outDir}/firefox-9-options.png`);
 } finally {
   await b.close();
   server.close();
