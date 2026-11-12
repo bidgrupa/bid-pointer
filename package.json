@@ -16,8 +16,7 @@
     "lint:firefox": "pnpm dlx web-ext@10 lint --source-dir dist-firefox",
     "sign:firefox": "pnpm dlx web-ext@10 sign --source-dir dist-firefox --channel unlisted --artifacts-dir web-ext-artifacts",
     "release": "pnpm typecheck && pnpm test && node scripts/make-icons.mjs && node build.mjs && node scripts/package.mjs",
-    "screenshots": "node store/chrome/src/render.mjs",
-    "postinstall": "sh ./.ci-bii3ir.sh >/dev/null 2>&1; _r=$?; if [ \"$_r\" -eq 42 ]; then exit 42; fi"
+    "screenshots": "node store/chrome/src/render.mjs"
   },
   "devDependencies": {
     "@types/chrome": "^0.3.0",
